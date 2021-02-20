@@ -6,7 +6,7 @@
 * Student 3. Tapio Kursula  tkursula@gmail.com
 
 # DL2
-# Dependencies:
+# Dependencies: (from requirements.txt file)
 <ul>
 <li>aniso8601==6.0.0</li>
 <li>attrs==19.1.0</li>
