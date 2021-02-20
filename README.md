@@ -45,7 +45,7 @@
 
 # Note
 
-If Python version of environment is 3.8 or higher, some modifications to the __init__.py file in flask_sqlalchemy folder need to be done.<br/>
+If Python version of environment is 3.8 or higher, some modifications to the \_\_init\_\_.py file in flask_sqlalchemy folder need to be done.<br/>
 On row 39 change:<br/>
 _timer = time.perf_counter()  ==>  _timer = time.perf_counter
 
