@@ -5,8 +5,8 @@
 * Student 2. Essi Passoja essi.passoja@gmail.com
 * Student 3. Tapio Kursula  tkursula@gmail.com
 
-#DL2
-#Dependencies:
+# DL2
+# Dependencies:
 <ul>
 <li>aniso8601==6.0.0</li>
 <li>attrs==19.1.0</li>
@@ -43,11 +43,11 @@
 <li>Python==3.8.5</li>
 </ul>
 
-#Database
+# Database
 
 SQLite
 
-#Instructions 
+# Instructions 
 
 Go to database folder and run pytest.
 This does the database framework, external libraries, database population and 
