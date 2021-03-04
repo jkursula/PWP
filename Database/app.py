@@ -1,6 +1,7 @@
+from datetime import datetime
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from sqlalchemy.exc import SQLAlchemyError
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
@@ -32,6 +33,10 @@ Current implementation:
     sender = db.relationship("User", foreign_keys=[senderId])
     receiver = db.relationship("User", foreign_keys=[receiverId])
     category = db.relationship("Category", secondary=transaction_category_association_table, back_populates="transaction")
+
+    #TODO: currently does not work. See if functioning checker can be made
+    if senderId == receiverId:
+        raise SQLAlchemyError("The sender and receiver cannot be the same User")
 
 class Category(db.Model):
     __tablename__ = 'category'

@@ -13,7 +13,6 @@ from sqlalchemy.exc import StatementError
 from sqlalchemy import event
 
 
-##TODO: db_test.py does not work either...
 
 
 @event.listens_for(Engine, "connect")
@@ -119,6 +118,10 @@ def test_create_instances(db_handle):
         assert bankAccount in db_bankAccounts
 
 def test_update_instances(db_handle):
+    """
+    First instances are created and then updated. Lastly the instances are checked to have the updated attributes.
+    """
+    #create instances
     bankAccount1 = _get_bankAccount(iban="FI03", bankName="The bank")
     bankAccount2 = _get_bankAccount(iban="FI04", bankName="The bank")
     user1 = _get_user(username="user3", password="passwor3")
@@ -145,7 +148,7 @@ def test_update_instances(db_handle):
     category1.categoryName = "dog"
     bankAccount1.bankName = "The other bank"
     db_handle.session.commit()
-    #check that instances are updated
+    #check that instances are updated correctly
     db_user1 = User.query.filter_by(username="user3").first()
     db_user2 = User.query.filter_by(username="user4").first()
     db_transaction = Transaction.query.filter_by(id=1).first()
@@ -158,6 +161,14 @@ def test_update_instances(db_handle):
 
 
 def test_delete_instances(db_handle):
+    """
+    Tests that instances behave correctly when deleted.
+    """
+    #create instances:
+    #2 bankAccounts
+    #2 Users
+    #2 Categories
+    #1 Transaction
     bankAccount1 = _get_bankAccount(iban="FI05", bankName="The bank")
     bankAccount2 = _get_bankAccount(iban="FI06", bankName="The bank")
     user1 = _get_user(username="user3", password="passwor3")
@@ -177,7 +188,11 @@ def test_delete_instances(db_handle):
     db_handle.session.add(category2)
     db_handle.session.add(transaction)
     db_handle.session.commit()
-    #delete instances
+    #delete instances:
+    #1 bankAccount
+    #1 User
+    #1 Category
+    #1 Transaction
     db_handle.session.delete(user1)
     db_handle.session.delete(bankAccount2)
     db_handle.session.delete(category2)
@@ -191,7 +206,10 @@ def test_delete_instances(db_handle):
     assert Transaction.query.count() == 0
 
 def test_errors(db_handle):
-    #two bankaccounts with the same iban should raise integrityerror
+    """
+    Test that the correct errors are raised in situations where they should be raised.
+    """
+    #two bankaccounts with the same iban should raise IntegrityError
     bankAccount1 = _get_bankAccount(iban="FI01", bankName="The bank")
     bankAccount2 = _get_bankAccount(iban="FI01", bankName="The bank")
     db_handle.session.add(bankAccount1)
@@ -200,7 +218,7 @@ def test_errors(db_handle):
         db_handle.session.commit()
     db_handle.session.rollback()
 
-    #two users with the same username should raise integrityerror
+    #two users with the same username should raise IntegrityError
     user1 = _get_user(username="user1", password="passwor3")
     user2 = _get_user(username="user1", password="password4")
     db_handle.session.add(user1)
@@ -209,7 +227,7 @@ def test_errors(db_handle):
         db_handle.session.commit()
     db_handle.session.rollback()
 
-    #two categories with the same name should raise integrityerror
+    #two categories with the same name should raise IntegrityError
     category1 = _get_category(name="cat1")
     category2 = _get_category(name="cat1")
     db_handle.session.add(category1)
@@ -226,7 +244,7 @@ def test_errors(db_handle):
     db_handle.session.add(user4)
     db_handle.session.commit()
 
-    #transaction with price other than float should raise statementerror
+    #transaction with price other than float should raise StatementError
     transaction = _get_transaction(price="en kerro", dateTime=datetime.now(), sender=user3, receiver=user4,
                                    category=[category1])
     db_handle.session.add(transaction)
@@ -234,7 +252,7 @@ def test_errors(db_handle):
         db_handle.session.commit()
     db_handle.session.rollback()
 
-    #transaction with dateTime other than datetime should raise statementerror
+    #transaction with dateTime other than datetime should raise StatementError
     transaction = _get_transaction(price=9.99, dateTime="en kerro", sender=user3, receiver=user4,
                                    category=[category1])
     db_handle.session.add(transaction)
