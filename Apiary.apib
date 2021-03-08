@@ -1,0 +1,193 @@
+FORMAT: 1A
+HOST: https://localhost:5000/
+
+# Perfectly Balanced: a budgeting tool
+
+This is the bestest API you have ever seen full stop.
+
+#Group Transaction
+
+## Transaction Collection [/transactions]
+
+### List all transaction [GET]
+
++ Relation: transactions
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+    
+    + Body
+
+            {
+                "@namespaces": {
+                    "bumeta": {
+                        "name": "/budgetmeta/link-relations#"
+                    }
+                },
+                "@controls": {
+                    "self": {
+                        "href": "/api/transactions/"
+                    },
+                    "bumeta:add-transaction": {
+                        "href": "/api/transactions/",
+                        "title": "All transactions",
+                        "encoding": "json",
+                        "method": "POST",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "price": {
+                                    "description": "Transaction amount",
+                                    "type": "float"
+                                },
+                                "datetime": {
+                                    "description": "Transaction date",
+                                    "type": "string",
+                                    "pattern": "^[0-9]{4}-[01][0-9]-[0-3][0-9]$"
+                                },
+                                "sender": {
+                                    "description": "Who sent moneh",
+                                    "type": "user object",
+                                    "properties":{
+                                        "username":{
+                                            "description":"User's unique username",
+                                            "type":"string"
+                                        }
+                                    }
+                                },
+                                "receiver": {
+                                    "description": "Who got moneh",
+                                    "type": "user object",
+                                    "properties":{
+                                        "username":{
+                                            "description":"User's unique username",
+                                            "type":"string"
+                                        }
+                                    }
+                                },
+                                "category": {
+                                    "description": "Transaction category",
+                                    "type": "string"
+                                    }
+                                },
+                            "required": ["price", "sender", "receiver"]
+                            }
+                        }
+                    },
+                "items": [
+                    {
+                        "price": 10.0,
+                        "datetime": "2021-02-20",
+                        "sender": "Kalle Kallis",
+                        "receiver": "Make Massinen",
+                        "category": ["Food"],
+                        "@controls": {
+                            "self": {
+                                "href": "/api/transactions/1/"
+                            }
+                        }
+                    }
+                ]
+            }
+
+### Add transaction to transactions [POST]
+
+Adds a new album for the artist. The album representation must be valid against the album schema.
+
++ Relation: add-transaction
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+                "price": 100.0,
+                "datetime": "2021-03-04",
+                "sender": "Massi Päällikkö",
+                "receiver": "Cash Money",
+                "category": ["Utensils", "Kitchenware"]
+            }
+
++ Response 201
+
+    + Headers
+    
+            Location: /api/transactions/2/
+
+<!-- TODO: add body -->
+<!-- TODO: more responses? -->
++ Response 415
+
+
+## Transaction [/api/transactions/{transaction}]
+
+This resource represents a transaction, as identified by the transaction's id.
+It includes the transactions metadata.
+Transaction's sender and receiver can be referenced through it.
+
++ Parameters
+
+    + transaction: 1 (integer) - transaction's id
+
+
+### Transaction information [GET]
+
+Get the transaction representation.
+
++ Relation: self
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
+        
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+    
+            {
+                "@namespaces": {
+                    "mumeta": {
+                        "name": "/budgetmeta/link-relations#"
+                    }
+                },
+                "price": 100.0,
+                "datetime": "2021-03-04",
+                "sender": "Massi Päällikkö",
+                "receiver": "Cash Money",
+                "category": ["Utensils", "Kitchenware"],
+                "@controls": {
+                    "self": {
+                        "href": "/api/transactions/2/"
+                    },
+                    "bumeta:collection": {
+                        "href": "/api/transactions/"
+                    },
+                    "bumeta:sender": {
+                        "href": "/api/users/1/"
+                    },
+                    "bumeta:receiver": {
+                        "href": "/api/users/2/"
+                    },
+                    "bumeta:delete": {
+                        "href": "/api/transactions/2/",
+                        "title": "Delete this transaction",
+                        "method": "DELETE"
+                    }
+                }
+            }
+
++ Response 404 (application/vnd.mason+json)
+
+    The client is trying to access an transaction that does not exist.
+
+    + Body
+
+<!-- TODO: add body -->
