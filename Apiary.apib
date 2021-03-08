@@ -381,17 +381,17 @@ teksti
                                     "description": "User's bankAccount",
                                     "type": "object",
                                     "properties":{
-                                    "iban": {
-                                        "description": "International bank account number",
-                                        "type": "string"
-                                    },
-                                    "bankName": {
-                                        "description": "Bank's name",
-                                        "type": "string"
-                                    }
+                                        "iban": {
+                                            "description": "International bank account number",
+                                            "type": "string"
+                                        },
+                                        "bankName": {
+                                            "description": "Bank's name",
+                                            "type": "string"
+                                        }
                                     }
                                 }
-                                },
+                            },
                             "required": ["username", "password", "bankAccount"]
                             }
                         }
@@ -497,33 +497,94 @@ Get the user representation.
                 },
                 "@controls": {
                     "self": {
-                        "href": "/api/categories/"
+                        "href": "/api/bankaccounts/"
                     },
-                    "bumeta:add-category": {
-                        "href": "/api/categories/",
-                        "title": "All categories",
+                    "bumeta:add-bank-account": {
+                        "href": "/api/bankaccounts/",
+                        "title": "All bank accounts",
                         "encoding": "json",
                         "method": "POST",
                         "schema": {
                             "type": "object",
-                            "properties": {
-                                "categoryName": {
-                                    "description": "Category name",
-                                    "type": "string"
-                                }
-                            },
-                            "required": ["categoryName"]
+                                "properties":{
+                                    "iban": {
+                                        "description": "International bank account number",
+                                        "type": "string"
+                                    },
+                                    "bankName": {
+                                        "description": "Bank's name",
+                                        "type": "string"
+                                    }
+                                },
+                            "required": ["iban"]
                             }
                         }
                     },
                 "items": [
                     {
-                        "categoryName": "Food",
+                        "iban": "FI00000002",
+                        "bankName": "The bank",
                         "@controls": {
                             "self": {
-                                "href": "/api/categories/1/"
+                                "href": "/api/bankaccounts/2"
                             }
                         }
                     }
                 ]
+            }
+
+## Bank Account [/api/bankaccounts/{bankaccount}]
+
+This resource represents a bank account, as identified by the bank account's unique id
+It includes the bank account's metadata.
+
++ Parameters
+
+    + bankaccount: 1 (string) - bank account's unique id
+
+
+### Bank Account information [GET]
+
+Get the bank account representation.
+
++ Relation: self
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
+        
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+    
+            {
+                "@namespaces": {
+                    "mumeta": {
+                        "name": "/budgetmeta/link-relations#"
+                    }
+                },
+                "iban": "FI00000002",
+                "bankName": "The bank",
+                "@controls": {
+                    "self": {
+                        "href": "/api/bankaccounts/3/"
+                    },
+                    "bumeta:collection": {
+                        "href": "/api/users/"
+                    },
+                    "bumeta:users": {
+                        "href": "/api/bankaccounts/3/users/"
+                    },
+                    "bumeta:edit": {
+                        "href": "/api/bankaccounts/3/",
+                        "title": "Edit this user",
+                        "method": "PUT"
+                    },
+                    "bumeta:delete": {
+                        "href": "/api/bankaccounts/3/",
+                        "title": "Delete this user",
+                        "method": "DELETE"
+                    }
+                }
             }
