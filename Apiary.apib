@@ -7,7 +7,7 @@ This is the bestest API you have ever seen full stop.
 
 #Group Transaction
 
-## Transaction Collection [/transactions]
+## Transaction Collection [api/transactions]
 
 ### List all transaction [GET]
 
@@ -191,3 +191,334 @@ Get the transaction representation.
     + Body
 
 <!-- TODO: add body -->
+
+
+
+## Category Collection [api/categories/]
+
+### List all categories [GET]
+
++ Relation: categories
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+    
+    + Body
+
+            {
+                "@namespaces": {
+                    "bumeta": {
+                        "name": "/budgetmeta/link-relations#"
+                    }
+                },
+                "@controls": {
+                    "self": {
+                        "href": "/api/categories/"
+                    },
+                    "bumeta:add-category": {
+                        "href": "/api/categories/",
+                        "title": "All categories",
+                        "encoding": "json",
+                        "method": "POST",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "categoryName": {
+                                    "description": "Category name",
+                                    "type": "string"
+                                }
+                            },
+                            "required": ["categoryName"]
+                            }
+                        }
+                    },
+                "items": [
+                    {
+                        "categoryName": "Food",
+                        "@controls": {
+                            "self": {
+                                "href": "/api/categories/1/"
+                            }
+                        }
+                    }
+                ]
+            }
+
+### Add category to categories [POST]
+
+Adds a new category to the categories.
+The category representation must be valid against the category schema.
+
++ Relation: add-category
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+                "categoryName": "Clothes"
+            }
+
++ Response 201
+
+    + Headers
+    
+            Location: /api/categories/3/
+
+<!-- TODO: add body -->
+<!-- TODO: more responses? -->
++ Response 415
+
+## Category [/api/categories/{categoryName}]
+
+This resource represents a transaction, as identified by the transaction's id.
+It includes the transactions metadata.
+Transaction's sender and receiver can be referenced through it.
+
++ Parameters
+
+    + categoryName: 1 (string) - categorie's unique name
+
+
+### Category information [GET]
+
+Get the category representation.
+
++ Relation: self
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
+        
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+    
+            {
+                "@namespaces": {
+                    "mumeta": {
+                        "name": "/budgetmeta/link-relations#"
+                    }
+                },
+                "categoryName": "Clothes",
+                "@controls": {
+                    "self": {
+                        "href": "/api/categories/Clothes/"
+                    },
+                    "bumeta:collection": {
+                        "href": "/api/categories/"
+                    },
+                    "bumeta:transactions": {
+                        "href": "/api/categories/Clothes/transactions/"
+                    },
+                    "bumeta:edit": {
+                        "href": "/api/categories/Clothes/",
+                        "title": "Edit this category",
+                        "method": "PUT"
+                    },
+                    "bumeta:delete": {
+                        "href": "/api/categories/Clothes/",
+                        "title": "Delete this category",
+                        "method": "DELETE"
+                    }
+                }
+            }
+            
+## Users Collection [api/users/]
+
+teksti
+
+### List all users [GET]
+
++ Relation: users
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+    
+    + Body
+
+            {
+                "@namespaces": {
+                    "bumeta": {
+                        "name": "/budgetmeta/link-relations#"
+                    }
+                },
+                "@controls": {
+                    "self": {
+                        "href": "/api/users/"
+                    },
+                    "bumeta:add-user": {
+                        "href": "/api/users/",
+                        "title": "All users",
+                        "encoding": "json",
+                        "method": "POST",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "username": {
+                                    "description": "User's unique username",
+                                    "type": "string"
+                                },
+                                "password": {
+                                    "description": "User's password",
+                                    "type": "string"
+                                },
+                                "bankAccount":{
+                                    "description": "User's bankAccount",
+                                    "type": "object",
+                                    "properties":{
+                                    "iban": {
+                                        "description": "International bank account number",
+                                        "type": "string"
+                                    },
+                                    "bankName": {
+                                        "description": "Bank's name",
+                                        "type": "string"
+                                    }
+                                    }
+                                }
+                                },
+                            "required": ["username", "password", "bankAccount"]
+                            }
+                        }
+                    },
+                "items": [
+                    {
+                        "username": "Kalle Kallis",
+                        "password": "pa55w0rd",
+                        "bankAccount": "FI0000000001",
+
+                        "@controls": {
+                            "self": {
+                                "href": "/api/users/1/"
+                            }
+                        }
+                    }
+                ]
+            }
+
+## User [/api/users/{username}]
+
+This resource represents a user, as identified by the user's unique username
+It includes the user's metadata.
+
++ Parameters
+
+    + username: 1 (string) - user's unique name
+
+
+### User information [GET]
+
+Get the user representation.
+
++ Relation: self
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
+        
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+    
+            {
+                "@namespaces": {
+                    "mumeta": {
+                        "name": "/budgetmeta/link-relations#"
+                    }
+                },
+                "username": "Kalle Kallis",
+                "password": "pa55w0rd",
+                "bankAccount": "FI0000000001",
+                "@controls": {
+                    "self": {
+                        "href": "/api/users/Kalle Kallis/"
+                    },
+                    "bumeta:collection": {
+                        "href": "/api/users/"
+                    },
+                    "bumeta:transactions": {
+                        "href": "/api/users/Kalle Kallis/transactions"
+                    },
+                    "bumeta:bank-account": {
+                        "href": "/api/bankaccounts/1/"
+                    },
+                    "bumeta:edit": {
+                        "href": "/api/users/Kalle Kallis/",
+                        "title": "Edit this user",
+                        "method": "PUT"
+                    },
+                    "bumeta:delete": {
+                        "href": "/api/users/Kalle Kallis/",
+                        "title": "Delete this user",
+                        "method": "DELETE"
+                    }
+                }
+            }
+
+## Bank Account Collection [api/bankaccounts/]
+
+### List all bank accounts [GET]
+
++ Relation: categories
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+    
+    + Body
+
+            {
+                "@namespaces": {
+                    "bumeta": {
+                        "name": "/budgetmeta/link-relations#"
+                    }
+                },
+                "@controls": {
+                    "self": {
+                        "href": "/api/categories/"
+                    },
+                    "bumeta:add-category": {
+                        "href": "/api/categories/",
+                        "title": "All categories",
+                        "encoding": "json",
+                        "method": "POST",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "categoryName": {
+                                    "description": "Category name",
+                                    "type": "string"
+                                }
+                            },
+                            "required": ["categoryName"]
+                            }
+                        }
+                    },
+                "items": [
+                    {
+                        "categoryName": "Food",
+                        "@controls": {
+                            "self": {
+                                "href": "/api/categories/1/"
+                            }
+                        }
+                    }
+                ]
+            }
