@@ -5,6 +5,215 @@ HOST: https://localhost:5000/
 
 This is the bestest API you have ever seen full stop.
 
+# Group Link Relations
+
+This section described custom link relations defined in this API. These are not resources. The API also uses 
+[IANA link relations](http://www.iana.org/assignments/link-relations/link-relations.xhtml) where applicable. Custom link relations are CURIEs that use the mumeta prefix. 
+
+## add-transaction
+
+This is a control that is used to add a transaction to the associated collection resource. The control includes a JSON schema and must be accessed with POST. 
+
+## add-category
+
+This is a control that is used to add a category to the associated collection resource. The control includes a JSON schema and must be accessed with POST. 
+
+## add-user
+
+This is a control that is used to add a user to the associated collection resource. The control includes a JSON schema and must be accessed with POST. 
+
+## add-bank-account
+
+This is a control that is used to add a bank account to the associated collection resource. The control includes a JSON schema and must be accessed with POST. 
+
+## sender
+
+Leads to a user who was the sender in a transaction item.
+
+## receiver
+
+Leads to a user who was the receiver in a transaction item.
+
+## delete
+
+Deletes the associated resource. Must be accessed with DELETE.
+
+## edit
+
+Edits the associated resource. Must be accessed with PUT.
+
+## category
+
+Leads to the category of the transaction from transactions in category.
+
+## transactions-all
+
+Leads to the transaction collection.
+
+## users-all
+
+Leads to the users collection.
+
+## transaction-in
+
+Leads to the transactions that are in given category.
+
+## transaction-by
+
+Leads to the transactions that are by given user.
+
+## users-with
+
+Leads to the users that have access to the given bank account.
+
+
+# Group Profiles
+
+This section includes resource profiles which provide semantic descriptions for the attributes of each resource, as well as the list of controls (by link relation) available from that resource.
+
+## Transaction Profile
+
+Profile definition for all transaction related resources.
+
+### Link Relations
+
+This section lists all possible link relations associated with transactions; not all of them are necessarily present on each resource type. The following link relations from the mumeta namespace are used:
+
+ * [category](reference/link-relations/category)
+ * [transactions-all](reference/link-relations/transactions-all)
+ * [add-transaction](reference/link-relations/add-transaction)
+ * [delete](reference/link-relations/delete)
+ * [collection](reference/link-relations/collection)
+ 
+### Semantic Descriptors
+
+#### Data Type Album
+
+ * `price`: Transaction amount
+ * `dateTime`: Transaction's date in [ISO 8601 format](https://www.iso.org/iso-8601-date-and-time-format.html) (YYYY-MM-DD). Use 01 for month or day if not known. Mandatory.
+ * `sender`: Transaction's sender.
+ * `receiver`: Transaction's receiver.
+ * `category`: The category(ies) given to transaction as a list.
+
+## Error Profile
+
+Profile definition for all errors returned by the API. See [Mason error control](https://github.com/JornWildt/Mason/blob/master/Documentation/Mason-draft-2.md#property-name-error) for more information about errors.
+
++ Attributes
+
+    + resource_url (string, required) - URI of the resource the error was generated from. 
+ 
+## Category Profile
+
+Profile definition for all category related resources.
+
+### Link Relations
+
+This section lists all possible link relations associated with tracks; not all of them are necessarily present on each resource type. The following link relations from the mumeta namespace are used:
+
+ * [add-category](reference/link-relations/add-category)
+ * [delete](reference/link-relations/delete)
+ 
+The following [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml) link relations are also used:
+
+ * edit
+ * collection
+
+### Semantic Descriptors
+
+#### Data Type Track
+
+ * `categoryName`: Categories unique name
+
+## User Profile
+
+Profile definition for all user related resources.
+
+### Link Relations
+
+This section lists all possible link relations associated with tracks; not all of them are necessarily present on each resource type. The following link relations from the mumeta namespace are used:
+
+ * [add-user](reference/link-relations/add-category)
+ * [transactions-by](reference/link-relations/transactions-by)
+ * [bank-account](reference/link-relations/bank-account)
+ * [users-all](reference/link-relations/users-all)
+ * [delete](reference/link-relations/delete)
+ 
+The following [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml) link relations are also used:
+
+ * edit
+ * collection
+
+### Semantic Descriptors
+
+#### Data Type Track
+
+ * `username`: User's unique name
+ * `password`: User's password
+ * `bankAccount`: User's bank account number
+
+## Bank account Profile
+
+Profile definition for all bank account related resources.
+
+### Link Relations
+
+This section lists all possible link relations associated with tracks; not all of them are necessarily present on each resource type. The following link relations from the mumeta namespace are used:
+
+ * [add-bank-account](reference/link-relations/add-bank-account)
+ * [users-with](reference/link-relations/users-with)
+ * [delete](reference/link-relations/delete)
+ 
+The following [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml) link relations are also used:
+
+ * edit
+ * collection
+
+### Semantic Descriptors
+
+#### Data Type Track
+
+ * `iban`: IBAN number
+ * `bankName`: Bank's name
+
+# Group Entry
+
+This group contains the entry point of the API
+
+## Entry Point [/api/]
+
+### Get entry point [GET]
+
+Get the API entry point
+
++ Request
+
+    + Headers
+    
+            Accept: application/vnd.mason+json
+            
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+    
+            {
+                "@namespaces": {
+                    "bumeta": {
+                        "name": "/budgetmeta/link-relations#"
+                    }
+                },
+                "@controls": {
+                    "bumeta:transactions": {
+                        "href": "/api/transactions/"
+                    },
+                    "bumeta:users": {
+                        "href": "/api/users/"
+                    }
+                }
+            }
+
+<!-- -->
+
 #Group Transaction
 
 ## Transaction Collection [api/transactions]
@@ -403,6 +612,8 @@ Get the transaction representation.
 
 ## Category Collection [api/categories/]
 
+This resource represents a category collection.
+
 ### List all categories [GET]
 
 + Relation: categories
@@ -524,9 +735,8 @@ The category representation must be valid against the category schema.
 
 ## Category [/api/categories/{categoryName}]
 
-This resource represents a transaction, as identified by the transaction's id.
-It includes the transactions metadata.
-Transaction's sender and receiver can be referenced through it.
+This resource represents a category, as identified by the category's unique name.
+It includes the category metadata.
 
 + Parameters
 
@@ -562,7 +772,7 @@ Get the category representation.
                     "bumeta:collection": {
                         "href": "/api/categories/"
                     },
-                    "bumeta:transactions": {
+                    "bumeta:transactions-in": {
                         "href": "/api/categories/Clothes/transactions/"
                     },
                     "bumeta:edit": {
@@ -603,7 +813,8 @@ Get the category representation.
 
 ## Users Collection [api/users/]
 
-teksti
+This resource represents a user, as identified by the user's unique username.
+It includes the user's metadata.
 
 ### List all users [GET]
 
@@ -719,7 +930,7 @@ Get the user representation.
                     "bumeta:collection": {
                         "href": "/api/users/"
                     },
-                    "bumeta:transactions": {
+                    "bumeta:transactions-by": {
                         "href": "/api/users/Kalle Kallis/transactions"
                     },
                     "bumeta:bank-account": {
@@ -789,7 +1000,7 @@ Get the user representation.
                         "href": "/api/bankaccounts/FI0000000001/",
                         "title": "This user"
                         },
-                    "bumeta:user-all": {
+                    "bumeta:users-all": {
                         "href": "/api/users/",
                         "title": "All users"
                         }
@@ -929,7 +1140,7 @@ Get the bank account representation.
                     "bumeta:collection": {
                         "href": "/api/users/"
                     },
-                    "bumeta:users": {
+                    "bumeta:users-with": {
                         "href": "/api/bankaccounts/3/users/"
                     },
                     "bumeta:edit": {
