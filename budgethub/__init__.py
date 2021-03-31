@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from budgethub.constants import *
 
 db = SQLAlchemy()
 
@@ -29,7 +30,7 @@ def create_app(test_config=None):
     from . import models
     from . import api
     app.cli.add_command(models.init_db_command)
-    app.cli.add_command(models.generate_test_data)
+    # app.cli.add_command(models.generate_test_data)
     app.register_blueprint(api.api_bp)
 
     @app.route(LINK_RELATIONS_URL)

@@ -1,10 +1,10 @@
 from flask import Blueprint
 from flask_restful import Api
 
-from sensorhub.resources.transaction import TransactionCollection, TransactionItem
-from sensorhub.resources.category import CategoryCollection, CategoryItem
-from sensorhub.resources.user import UserCollection, UserItem
-from sensorhub.resources.bank_account import BankAccountCollection, BankAccountItem
+from budgethub.resources.transaction import TransactionCollection, TransactionItem
+from budgethub.resources.category import CategoryCollection, CategoryItem
+from budgethub.resources.user import UserCollection, UserItem
+from budgethub.resources.bank_account import BankAccountCollection, BankAccountItem
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 api = Api(api_bp)

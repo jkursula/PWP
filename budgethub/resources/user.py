@@ -12,7 +12,7 @@ from budgethub.utils import *
 #User resources
 class UserCollection(Resource):
     def get(self):
-        pass
+        Response(status=500)
 
     def post(self):
         pass
