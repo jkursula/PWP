@@ -6,22 +6,22 @@ from budgethub.resources.category import CategoryCollection, CategoryItem
 from budgethub.resources.user import UserCollection, UserItem
 from budgethub.resources.bank_account import BankAccountCollection, BankAccountItem
 
-api_bp = Blueprint("api", __name__, url_prefix="/api")
+api_bp = Blueprint("api", __name__, url_prefix="/api/")
 api = Api(api_bp)
 
 ##Routing
 #transactions routing
-api.add_resource(TransactionCollection, "/api/transactions/")
-api.add_resource(TransactionItem, "/api/transactions/<transaction>/")
+api.add_resource(TransactionCollection, "/transactions/")
+api.add_resource(TransactionItem, "/transactions/<transaction>/")
 
 #categories routing
-api.add_resource(CategoryCollection, "/api/categories/")
-api.add_resource(CategoryItem, "/api/categories/<categoryname>/")
+api.add_resource(CategoryCollection, "/categories/")
+api.add_resource(CategoryItem, "/categories/<categoryname>/")
 
 #users routing
-api.add_resource(UserCollection, "/api/users/")
-api.add_resource(UserItem, "/api/users/<username>")
+api.add_resource(UserCollection, "/users/")
+api.add_resource(UserItem, "/users/<username>")
 
 #bank account routing
-api.add_resource(BankAccountCollection, "/api/bankaccounts/")
-api.add_resource(BankAccountItem, "/api/bankaccounts/<bankaccount>/")
+api.add_resource(BankAccountCollection, "/bankaccounts/")
+api.add_resource(BankAccountItem, "/bankaccounts/<bankaccount>/")

@@ -198,8 +198,30 @@ class UserBuilder(MasonBuilder):
             "type": "string"
         }
         props["bankAccount"] = {
-            "description": "User's bankAccount",
+            "description": "User's bankAccount(s)",
+            "type": "array"
+        }
+
+        return schema
+
+    @staticmethod
+    def create_user_schema():
+        schema = {
+            "type": "object",
+            "required": ["username", "password"]
+        }
+        props = schema["properties"] = {}
+        props["username"] = {
+            "description": "User's unique username",
             "type": "string"
+        }
+        props["password"] = {
+            "description": "User's password",
+            "type": "string"
+        }
+        props["bankAccount"] = {
+            "description": "User's bankAccount(s)",
+            "type": "array"
         }
 
         return schema
