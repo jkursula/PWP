@@ -86,8 +86,9 @@ class TransactionBuilder(MasonBuilder):
         }
         props["datetime"] = {
             "description": "Transaction's timestamp",
-            "type": "string",
-            "pattern": "^[0-9]{4}-[01][0-9]-[0-3][0-9]$"
+            "type": "string"
+            #TODO:enable pattern
+            # "pattern": "^[0-9]{4}-[01][0-9]-[0-3][0-9]$" 2021-04-03
         }
         props["sender"] = {
             "description": "Transaction's sender",
@@ -100,7 +101,7 @@ class TransactionBuilder(MasonBuilder):
         props["category"] = {
             "description": "Transaction's category",
             #TODO: onko string vai lista?
-            "type": "string"
+            "type": "array"
         }
         return schema
 
