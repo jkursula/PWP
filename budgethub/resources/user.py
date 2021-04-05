@@ -22,7 +22,7 @@ class UserCollection(Resource):
         for user in User.query.all():
             user_item_body = UserBuilder(
                 username = user.username,
-                bankAccount = user.bankAccount
+                bankAccount = [bankaccount.iban for bankaccount in user.bankAccount]
 
             )
             user_item_body.add_control("self", url_for("api.useritem", username=user.username))
@@ -46,10 +46,24 @@ class UserCollection(Resource):
 
         #TODO add bankaccount. i.e find bankaccount object from db
         #and link it to user.
+
+        db_bankaccount_list = []
+        for iban in request.json["bankAccount"]:
+            db_bankaccount = BankAccount.query.filter_by(iban=iban).first()
+            if db_bankaccount is None:
+                return create_error_response(
+                    404, "Not found",
+                    "No bank account was found with the iban(s) {}".format(request.json["bankAccount"])
+                )
+            db_bankaccount_list.append(db_bankaccount)
+
+
+
         user = User(
             username=request.json["username"],
-            password=request.json["password"]
- 
+            password=request.json["password"],
+            bankAccount=db_bankaccount_list
+
         )
 
         try:
@@ -76,7 +90,7 @@ class UserItem(Resource):
 
         body = UserBuilder(
                 username = db_user.username,
-                bankAccount = db_user.bankAccount
+                bankAccount = [bankaccount.iban for bankaccount in db_user.bankAccount]
             )
         body.add_namespace("bumeta", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.useritem", username=username))
@@ -106,8 +120,19 @@ class UserItem(Resource):
         except ValidationError as e:
             return create_error_response(400, "Invalid JSON document", str(e))
 
+
+        for iban in request.json["bankAccount"]:
+            db_bankaccount = BankAccount.query.filter_by(iban=iban).first()
+            if db_bankaccount is None:
+                return create_error_response(
+                    404, "Not found",
+                    "No bank account was found with the iban(s) {}".format(request.json["bankAccount"])
+                )
+            db_user.bankAccount.append(db_bankaccount)
+
         db_user.username = request.json["username"]
         db_user.password = request.json["password"]
+
 
         try:
             db.session.commit()

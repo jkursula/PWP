@@ -21,10 +21,11 @@ class BankAccountCollection(Resource):
         for bank in BankAccount.query.all():
             bank_item_body = BankAccountBuilder(
                 iban = bank.iban,
-                bankName = bank.bankName
+                bankName = bank.bankName,
+                user = [user.username for user in bank.user]
 
             )
-            bank_item_body.add_control("self", url_for("api.bankaccountitem", bankaccount_id=bank.iban))
+            bank_item_body.add_control("self", url_for("api.bankaccountitem", iban=bank.iban))
             bank_item_body.add_control("profile", BANK_ACCOUNT_PROFILE)
             banks.append(bank_item_body)
         body["items"] = banks
@@ -59,37 +60,38 @@ class BankAccountCollection(Resource):
             )
 
         return Response(status=201, headers={
-            "Location": url_for("api.bankaccountitem", bankaccount_id=request.json["iban"])
+            "Location": url_for("api.bankaccountitem", iban=request.json["iban"])
         })
 
 class BankAccountItem(Resource):
-    def get(self, bankaccount_id):
-        db_bank = BankAccount.query.filter_by(iban=bankaccount_id).first()
+    def get(self, iban):
+        db_bank = BankAccount.query.filter_by(iban=iban).first()
         if db_bank is None:
             return create_error_response(
                 404, "Not found",
-                "No Bankaccount was found with the iban {}".format(bankaccount_id)
+                "No Bankaccount was found with the iban {}".format(iban)
             )
 
         body = BankAccountBuilder(
                 iban = db_bank.iban,
-                bankName = db_bank.bankName
+                bankName = db_bank.bankName,
+                user=[user.username for user in db_bank.user]
             )
         body.add_namespace("bumeta", LINK_RELATIONS_URL)
-        body.add_control("self", url_for("api.bankaccountitem", bankaccount_id=bankaccount_id))
+        body.add_control("self", url_for("api.bankaccountitem", iban=iban))
         body.add_control("profile", BANK_ACCOUNT_PROFILE)
         body.add_control("bumeta:banks-all", url_for("api.bankaccountcollection"))
-        body.add_control_delete_bank_account(bankaccount_id)
-        body.add_control_edit_bank_account(bankaccount_id)
+        body.add_control_delete_bank_account(iban)
+        body.add_control_edit_bank_account(iban)
 
         return Response(json.dumps(body), 200, mimetype=MASON)
 
-    def put(self, bankaccount_id):
-        db_bank = BankAccount.query.filter_by(iban=bankaccount_id).first()
+    def put(self, iban):
+        db_bank = BankAccount.query.filter_by(iban=iban).first()
         if db_bank is None:
             return create_error_response(
                 404, "Not found",
-                "No bankaccount was found with the iban {}".format(bankaccount_id)
+                "No bankaccount was found with the iban {}".format(iban)
             )
 
         if not request.json:
@@ -102,6 +104,15 @@ class BankAccountItem(Resource):
             validate(request.json, BankAccountBuilder.bank_account_schema())
         except ValidationError as e:
             return create_error_response(400, "Invalid JSON document", str(e))
+
+        for user in request.json["user"]:
+            db_user = User.query.filter_by(username=user).first()
+            if db_user is None:
+                return create_error_response(
+                    404, "Not found",
+                    "No user was found with one or several of the username(s) {}".format(request.json["user"])
+                )
+            db_bank.user.append(db_user)
 
         db_bank.iban = request.json["iban"]
         db_bank.bankName = request.json["bankName"]
@@ -116,12 +127,12 @@ class BankAccountItem(Resource):
 
         return Response(status=204)
 
-    def delete(self, bankaccount_id):
-        db_bank = BankAccount.query.filter_by(iban=bankaccount_id).first()
+    def delete(self, iban):
+        db_bank = BankAccount.query.filter_by(iban=iban).first()
         if db_bank is None:
             return create_error_response(
                 404, "Not found",
-                "No Bankaccount was found with the iban {}".format(bankaccount_id)
+                "No Bankaccount was found with the iban {}".format(iban)
             )
 
         db.session.delete(db_bank)

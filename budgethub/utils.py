@@ -141,10 +141,10 @@ class CategoryBuilder(MasonBuilder):
     def category_schema():
         schema = {
             "type": "object",
-            "required": ["name"]
+            "required": ["category_name"]
         }
         props = schema["properties"] = {}
-        props["categoryName"] = {
+        props["category_name"] = {
             "description": "Categorie's unique name",
             "type": "string"
         }
@@ -302,18 +302,18 @@ class BankAccountBuilder(MasonBuilder):
             schema=self.bank_account_schema()
         )
     
-    def add_control_delete_bank_account(self, bankaccount_id):
+    def add_control_delete_bank_account(self, iban):
         self.add_control(
             ctrl_name="bumeta:delete",
-            href=url_for("api.bankaccountitem", bankaccount_id=bankaccount_id),
+            href=url_for("api.bankaccountitem", iban=iban),
             method="DELETE",
             title="Delete this resource"
         )
 
-    def add_control_edit_bank_account(self, bankaccount_id):
+    def add_control_edit_bank_account(self, iban):
         self.add_control(
             ctrl_name="edit",
-            href=url_for("api.bankaccountitem", bankaccount_id=bankaccount_id),
+            href=url_for("api.bankaccountitem", iban=iban),
             method="PUT",
             encoding="json",
             schema=self.bank_account_schema()

@@ -16,12 +16,12 @@ api.add_resource(TransactionItem, "/transactions/<transaction_id>/")
 
 #categories routing
 api.add_resource(CategoryCollection, "/categories/")
-api.add_resource(CategoryItem, "/categories/<categoryname>/")
+api.add_resource(CategoryItem, "/categories/<category_name>/")
 
 #users routing
 api.add_resource(UserCollection, "/users/")
-api.add_resource(UserItem, "/users/<username>")
+api.add_resource(UserItem, "/users/<username>/")
 
 #bank account routing
 api.add_resource(BankAccountCollection, "/bankaccounts/")
-api.add_resource(BankAccountItem, "/bankaccounts/<bankaccount_id>/")
+api.add_resource(BankAccountItem, "/bankaccounts/<iban>/")
