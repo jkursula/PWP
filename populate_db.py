@@ -3,7 +3,7 @@ from datetime import datetime
 from budgethub import db, create_app
 from budgethub.models import *
 
-
+#development app
 app = create_app()
 
 def _get_bankAccount(iban, bankName):
@@ -35,7 +35,6 @@ def _get_transaction(price, dateTime, sender, receiver, category):
         category=category
     )
 
-#TODO: is borken. fix, pls
 def populate_db():
 
     bankAccount1 = _get_bankAccount(iban="FI01", bankName="The bank")

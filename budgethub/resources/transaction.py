@@ -1,3 +1,6 @@
+from jsonschema import validate, ValidationError
+from datetime import datetime
+
 from flask_restful import Resource
 
 from flask import Flask, Response, request, url_for
@@ -9,7 +12,7 @@ from budgethub.models import *
 from budgethub.constants import *
 from budgethub.utils import *
 
-from datetime import datetime
+
 
 #Transaction resources
 class TransactionCollection(Resource):
@@ -24,12 +27,12 @@ class TransactionCollection(Resource):
             transaction_item_body = TransactionBuilder(
                 id = transaction.id,
                 price = transaction.price,
-                dateTime = transaction.dateTime,
-                sender = transaction.sender,
-                receiver = transaction.receiver,
-                category = transaction.category
+                dateTime = str(transaction.dateTime),
+                sender = transaction.sender.username,
+                receiver = transaction.receiver.username,
+                category = [cat.categoryName for cat in transaction.category]
             )
-            transaction_item_body.add_control("self", url_for("api.transactionitem", id=transaction.id))
+            transaction_item_body.add_control("self", url_for("api.transactionitem", transaction_id=transaction.id))
             transaction_item_body.add_control("profile", TRANSACTION_PROFILE)
             items.append(transaction_item_body)
         body["items"] = items
@@ -48,17 +51,35 @@ class TransactionCollection(Resource):
         except ValidationError as e:
             return create_error_response(400, "Invalid JSON document", str(e))
 
-        #TODO add bankaccount. i.e find bankaccount object from db
-        #and link it to user.
-        now = datetime.now()
-        dt_string = now.strftime("%Y-%m-%d")
+        db_sender = User.query.filter_by(username=request.json["sender"]).first()
+        if db_sender is None:
+            return create_error_response(
+                404, "Not found",
+                "No user was found with the username {}".format(request.json["sender"])
+            )
+        db_receiver = User.query.filter_by(username=request.json["receiver"]).first()
+        if db_receiver is None:
+            return create_error_response(
+                404, "Not found",
+                "No user was found with the username {}".format(request.json["receiver"])
+            )
+        db_category_list = []
+        for cat in request.json["category"]:
+            db_category = Category.query.filter_by(categoryName=cat).first()
+            if db_category is None:
+                return create_error_response(
+                    404, "Not found",
+                    "No category was found with the categoryname(s) {}".format(request.json["category"])
+                )
+            db_category_list.append(db_category)
+        
 
         transaction = Transaction(
             price=request.json["price"],
             dateTime=datetime.now(),
-            sender=request.json["sender"],
-            receiver=request.json["receiver"],
-            category=request.json["category"]
+            sender=db_sender,
+            receiver=db_receiver,
+            category=db_category_list
  
         )
 
@@ -71,9 +92,7 @@ class TransactionCollection(Resource):
                 "implement actual error message"
             )
 
-        return Response(status=201, headers={
-            "Transaction created"
-        })
+        return Response(status=201)
 
 class TransactionItem(Resource):
     def get(self, transaction_id):
@@ -86,13 +105,13 @@ class TransactionItem(Resource):
 
         body = TransactionBuilder(
             price=db_transaction.price,
-            dateTime=db_transaction.dateTime,
-            sender=db_transaction.sender,
-            receiver=db_transaction.receiver,
-            category=db_transaction.category
+            dateTime=str(db_transaction.dateTime),
+            sender=db_transaction.sender.username,
+            receiver=db_transaction.receiver.username,
+            category=[cat.categoryName for cat in db_transaction.category]
             )
         body.add_namespace("bumeta", LINK_RELATIONS_URL)
-        body.add_control("self", url_for("api.transactionitem", id=transaction_id))
+        body.add_control("self", url_for("api.transactionitem", transaction_id=transaction_id))
         body.add_control("profile", TRANSACTION_PROFILE)
         body.add_control("bumeta:transactions-all", url_for("api.transactioncollection"))
         body.add_control_delete_transaction(db_transaction)

@@ -80,6 +80,10 @@ class TransactionBuilder(MasonBuilder):
             "reqired": ["price", "datetime", "sender", "receiver"]
         }
         props = schema["properties"] = {}
+        props["id"] = {
+            "description": "Transaction's unique id",
+            "type": "number"
+        }
         props["price"] = {
             "description": "Transaction's amount",
             "type": "number"

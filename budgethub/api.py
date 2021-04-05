@@ -12,7 +12,7 @@ api = Api(api_bp)
 ##Routing
 #transactions routing
 api.add_resource(TransactionCollection, "/transactions/")
-api.add_resource(TransactionItem, "/transactions/<transaction>/")
+api.add_resource(TransactionItem, "/transactions/<transaction_id>/")
 
 #categories routing
 api.add_resource(CategoryCollection, "/categories/")
@@ -24,4 +24,4 @@ api.add_resource(UserItem, "/users/<username>")
 
 #bank account routing
 api.add_resource(BankAccountCollection, "/bankaccounts/")
-api.add_resource(BankAccountItem, "/bankaccounts/<bankaccount>/")
+api.add_resource(BankAccountItem, "/bankaccounts/<bankaccount_id>/")
