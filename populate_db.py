@@ -1,10 +1,10 @@
-from budgethub import db
-from budgethub.models import *
-from budgethub.constants import *
-from budgethub.utils import *
 from datetime import datetime
 
-app = Flask(__name__)
+from budgethub import db, create_app
+from budgethub.models import *
+
+
+app = create_app()
 
 def _get_bankAccount(iban, bankName):
     return BankAccount(
