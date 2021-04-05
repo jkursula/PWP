@@ -24,7 +24,7 @@ class BankAccountCollection(Resource):
                 bankName = bank.bankName
 
             )
-            bank_item_body.add_control("self", url_for("api.bankaccountitem", bankaccount=bank.iban))
+            bank_item_body.add_control("self", url_for("api.bankaccountitem", bankaccount_id=bank.iban))
             bank_item_body.add_control("profile", BANK_ACCOUNT_PROFILE)
             banks.append(bank_item_body)
         body["items"] = banks
@@ -59,16 +59,16 @@ class BankAccountCollection(Resource):
             )
 
         return Response(status=201, headers={
-            "Location": url_for("api.bankaccountitem", bankaccount=request.json["iban"])
+            "Location": url_for("api.bankaccountitem", bankaccount_id=request.json["iban"])
         })
 
 class BankAccountItem(Resource):
-    def get(self, bankaccount):
-        db_bank = BankAccount.query.filter_by(iban=bankaccount).first()
+    def get(self, bankaccount_id):
+        db_bank = BankAccount.query.filter_by(iban=bankaccount_id).first()
         if db_bank is None:
             return create_error_response(
                 404, "Not found",
-                "No Bankaccount was found with the iban {}".format(bankaccount)
+                "No Bankaccount was found with the iban {}".format(bankaccount_id)
             )
 
         body = BankAccountBuilder(
@@ -76,20 +76,20 @@ class BankAccountItem(Resource):
                 bankName = db_bank.bankName
             )
         body.add_namespace("bumeta", LINK_RELATIONS_URL)
-        body.add_control("self", url_for("api.bankaccountitem", bankaccount=bankaccount))
+        body.add_control("self", url_for("api.bankaccountitem", bankaccount_id=bankaccount_id))
         body.add_control("profile", BANK_ACCOUNT_PROFILE)
         body.add_control("bumeta:banks-all", url_for("api.bankaccountcollection"))
-        body.add_control_delete_bank_account(bankaccount)
-        body.add_control_edit_bank_account(bankaccount)
+        body.add_control_delete_bank_account(bankaccount_id)
+        body.add_control_edit_bank_account(bankaccount_id)
 
         return Response(json.dumps(body), 200, mimetype=MASON)
 
-    def put(self, bankaccount):
-        db_bank = BankAccount.query.filter_by(iban=bankaccount).first()
+    def put(self, bankaccount_id):
+        db_bank = BankAccount.query.filter_by(iban=bankaccount_id).first()
         if db_bank is None:
             return create_error_response(
                 404, "Not found",
-                "No bankaccount was found with the iban {}".format(bankaccount)
+                "No bankaccount was found with the iban {}".format(bankaccount_id)
             )
 
         if not request.json:
@@ -116,12 +116,12 @@ class BankAccountItem(Resource):
 
         return Response(status=204)
 
-    def delete(self, bankaccount):
-        db_bank = BankAccount.query.filter_by(iban=bankaccount).first()
+    def delete(self, bankaccount_id):
+        db_bank = BankAccount.query.filter_by(iban=bankaccount_id).first()
         if db_bank is None:
             return create_error_response(
                 404, "Not found",
-                "No Bankaccount was found with the iban {}".format(bankaccount)
+                "No Bankaccount was found with the iban {}".format(bankaccount_id)
             )
 
         db.session.delete(db_bank)
