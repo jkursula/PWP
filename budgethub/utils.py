@@ -298,18 +298,18 @@ class BankAccountBuilder(MasonBuilder):
             schema=self.bank_account_schema()
         )
     
-    def add_control_delete_bank_account(self, bank_account_id):
+    def add_control_delete_bank_account(self, bankaccount):
         self.add_control(
             ctrl_name="bumeta:delete",
-            href=url_for("api.bankaccountitem", bank_account_id=bank_account_id),
+            href=url_for("api.bankaccountitem", bankaccount=bankaccount),
             method="DELETE",
             title="Delete this resource"
         )
 
-    def add_control_edit_bank_account(self, bank_account_id):
+    def add_control_edit_bank_account(self, bankaccount):
         self.add_control(
             ctrl_name="edit",
-            href=url_for("api.bankaccountitem", bank_account_id=bank_account_id),
+            href=url_for("api.bankaccountitem", bankaccount=bankaccount),
             method="PUT",
             encoding="json",
             schema=self.bank_account_schema()
