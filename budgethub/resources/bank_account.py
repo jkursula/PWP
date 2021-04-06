@@ -120,6 +120,7 @@ class BankAccountItem(Resource):
         try:
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             return create_error_response(
                 409, "Already exists",
                 "Bankaccount with iban '{}' already exists.".format(request.json["iban"])
