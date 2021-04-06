@@ -288,7 +288,7 @@ class BankAccountBuilder(MasonBuilder):
     def add_control_all_bank_accounts(self):
         self.add_control(
             "bumeta:bank-accounts-all",
-            "/api/bank-accounts/",
+            "/api/bankaccounts/",
             method="GET",
             title="Leads to the list of all bank accounts"
         )
@@ -296,7 +296,7 @@ class BankAccountBuilder(MasonBuilder):
     def add_control_add_bank_account(self):
         self.add_control(
             ctrl_name="bumeta:add-bank-account",
-            href="api/bank-accounts/",
+            href="api/bankaccounts/",
             method="POST",
             encoding="json",
             schema=self.bank_account_schema()
