@@ -162,7 +162,7 @@ class CategoryBuilder(MasonBuilder):
     def add_control_add_category(self):
         self.add_control(
             ctrl_name="bumeta:add-category",
-            href="api/category/",
+            href="api/categories/",
             method="POST",
             encoding="json",
             schema=self.category_schema()
