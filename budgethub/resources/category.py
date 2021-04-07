@@ -25,7 +25,7 @@ class CategoryCollection(Resource):
                 transaction=[transaction.id for transaction in category.transaction]
             )
             category_body.add_control("self", url_for(
-                "api.categoryitem", category_name=category.category_name))
+                "api.categoryitem", category_name=category.categoryName))
             category_body.add_control("profile", CATEGORY_PROFILE)
             categories.append(category_body)
         body["items"] = categories
@@ -51,6 +51,7 @@ class CategoryCollection(Resource):
             db.session.add(category)
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             return create_error_response(
                 409, "Already exists",
                 "Category with name {} already exists.".format(
