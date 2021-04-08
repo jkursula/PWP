@@ -65,15 +65,15 @@ install requirements from requirements.txt file and also:
         
 run budgethub app using flask by inputting commands
 
-set/export FLASK_APP=budgethub
+*set/export FLASK_APP=budgethub*
 
-set/export FLASK_ENV=development
+*set/export FLASK_ENV=development*
 
-flask run
+*flask run*
 
 # Instructions for API testing
 
 Same requirements as running the API but install also:
 pytest, pytest-cov using pip.
 
-run pytest --cov-report term-missing --cov=budgethub test_api.py
+run *pytest --cov-report term-missing --cov=budgethub test_api.py*
