@@ -77,7 +77,7 @@ class TransactionBuilder(MasonBuilder):
     def transaction_schema():
         schema = {
             "type": "object",
-            "reqired": ["price", "datetime", "sender", "receiver"]
+            "required": ["price", "datetime", "sender", "receiver"]
         }
         props = schema["properties"] = {}
         props["id"] = {
