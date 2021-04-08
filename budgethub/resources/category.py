@@ -106,6 +106,7 @@ class CategoryItem(Resource):
         try:
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             return create_error_response(
                 409, "Already exists",
                 "Category with name {} already exists.".format(category_name)
