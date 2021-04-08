@@ -91,31 +91,47 @@ def populate_db():
     
 def _get_bankaccount_json(iban="FI03"):
     """
-    Creates a valid bankaccount JSON object to be used for PUT and POST tests.
+    Creates a valid bankaccount JSON object to be used for POST tests.
+    """
+    
+    return {"iban":"{}".format(iban), "bankName":"The Bank", "user":["user1"]}
+    
+def _get_modified_bankaccount_json(iban="FI01"):
+    """
+    Creates a valid bankaccount JSON object to be used for PUT  tests.
     """
     
     return {"iban":"{}".format(iban), "bankName":"The Bank", "user":["user1"]}
     
 def _get_category_json(category_name="cat3"):
     '''
-    Creates valid category json object to be used for put and post test
+    Creates valid category json object to be used for post test
     '''
     
     return {"category_name":"{}".format(category_name), "transaction":["1"]}
+ 
 
 def _get_user_json(username="user3"):
     """
-    Creates a valid user JSON object to be used for PUT and POST tests.
+    Creates a valid user JSON object to be used for POST tests.
     """
     
     return {"username":"{}".format(username), "password":"En kerro", "bankAccount":["FI01"]}
     
+def _get_modified_user_json(username="user1"):
+    """
+    Creates a valid user JSON object to be used for PUT tests.
+    """
+    
+    return {"username":"{}".format(username), "password":"test", "bankAccount":["FI01"]}
+    
 def _get_transaction_json():
     """
-    Creates a valid transaction JSON object to be used for PUT and POST tests.
+    Creates a valid bankaccount JSON object to be used for POST tests.
     """
     
     return {"price":10.63, "datetime":"2020-10-10", "sender":"user1", "receiver":"user2", "category":["category1"]}
+
     
 def _check_namespace(client, response):
     """
@@ -152,7 +168,7 @@ def _check_control_delete_method(ctrl, client, obj):
     
 def _check_control_put_method(ctrl, client, obj):
     """
-    Checks a PUT type control for bankaccount from a JSON object be it root document or an item
+    Checks a PUT type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
     validates a valid sensor against the schema of the control to ensure that
@@ -175,7 +191,7 @@ def _check_control_put_method(ctrl, client, obj):
     
 def _check_category_control_put_method(ctrl, client, obj):
     """
-    Checks a PUT type control for category from a JSON object be it root document or an item
+    Checks a PUT type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
     validates a valid sensor against the schema of the control to ensure that
@@ -198,7 +214,7 @@ def _check_category_control_put_method(ctrl, client, obj):
 
 def _check_user_control_put_method(ctrl, client, obj):
     """
-    Checks a PUT type control for user from a JSON object be it root document or an item
+    Checks a PUT type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
     validates a valid sensor against the schema of the control to ensure that
@@ -222,7 +238,7 @@ def _check_user_control_put_method(ctrl, client, obj):
 ''' Not implemented for transaction
 def _check_transaction_control_put_method(ctrl, client, obj):
     """
-    Checks a PUT type control for transaction from a JSON object be it root document or an item
+    Checks a PUT type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
     validates a valid sensor against the schema of the control to ensure that
@@ -245,7 +261,7 @@ def _check_transaction_control_put_method(ctrl, client, obj):
     
 def _check_control_post_method(ctrl, client, obj):
     """
-    Checks a POST type control for bankaccount from a JSON object be it root document or an item
+    Checks a POST type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
     validates a valid sensor against the schema of the control to ensure that
@@ -268,7 +284,7 @@ def _check_control_post_method(ctrl, client, obj):
     
 def _check_category_control_post_method(ctrl, client, obj):
     """
-    Checks a POST type control for category from a JSON object be it root document or an item
+    Checks a POST type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
     validates a valid sensor against the schema of the control to ensure that
@@ -290,7 +306,7 @@ def _check_category_control_post_method(ctrl, client, obj):
     
 def _check_user_control_post_method(ctrl, client, obj):
     """
-    Checks a POST type control for user from a JSON object be it root document or an item
+    Checks a POST type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
     validates a valid sensor against the schema of the control to ensure that
@@ -312,7 +328,7 @@ def _check_user_control_post_method(ctrl, client, obj):
     
 def _check_transaction_control_post_method(ctrl, client, obj):
     """
-    Checks a POST type control for transaction from a JSON object be it root document or an item
+    Checks a POST type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
     validates a valid sensor against the schema of the control to ensure that
@@ -428,6 +444,7 @@ class TestBankaccountItem(object):
         """
         
         valid = _get_bankaccount_json()
+        validmod = _get_modified_bankaccount_json()
         
         # test with wrong content type
         resp = client.put(self.RESOURCE_URL, data=json.dumps(valid))
@@ -441,10 +458,10 @@ class TestBankaccountItem(object):
         resp = client.put(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
         
-        '''# test with valid (only change model)
-        valid["bankName"] = "New Bank"
-        resp = client.put(self.RESOURCE_URL, json=valid)
-        assert resp.status_code == 204'''
+        # test with valid (only change model)
+        validmod["bankName"] = "New Bank"
+        resp = client.put(self.RESOURCE_URL, json=validmod)
+        assert resp.status_code == 204
         
         # remove field for 400
         valid.pop("bankName")
@@ -580,15 +597,16 @@ class TestCategoryItem(object):
         resp = client.put(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
         
+        #Not possible for category
         '''# test with valid (only change model)
         valid["category_name"] = "cat5"
         resp = client.put(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 204'''
         
-        # remove field for 415 because no body
-        valid.pop("category_name")
+        # remove field not possible because no body after it
+        '''valid.pop("category_name")
         resp = client.put(self.RESOURCE_URL, json=valid)
-        assert resp.status_code == 400
+        assert resp.status_code == 400'''
         
         valid = _get_category_json()
         resp = client.put(self.RESOURCE_URL, json=valid)
@@ -708,6 +726,7 @@ class TestUserItem(object):
         """
         
         valid = _get_user_json()
+        validmod = _get_modified_user_json()
         
         # test with wrong content type
         resp = client.put(self.RESOURCE_URL, data=json.dumps(valid))
@@ -721,10 +740,10 @@ class TestUserItem(object):
         resp = client.put(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
         
-        '''# test with valid (only change model)
-        valid["password"] = "New password"
-        resp = client.put(self.RESOURCE_URL, json=valid)
-        assert resp.status_code == 204'''
+        # test with valid (only change model)
+        validmod["password"] = "kerronpas"
+        resp = client.put(self.RESOURCE_URL, json=validmod)
+        assert resp.status_code == 204
         
         # remove field for 400
         valid.pop("username")
@@ -752,10 +771,10 @@ class TestUserItem(object):
         assert resp.status_code == 404
         resp = client.delete(self.INVALID_URL)
         assert resp.status_code == 404
-        
+       
 class TestTransactionCollection(object):
     """
-    This class implements tests for each HTTP method in Transaction collection
+    This class implements tests for each HTTP method in Bankaccount collection
     resource. 
     """
     
@@ -880,7 +899,7 @@ class TestTransactionItem(object):
         assert resp.status_code == 200
         body = json.loads(resp.data)
         assert body["username"] == valid["username"]'''
-        
+
     def test_delete(self, client):
         """
         Tests the DELETE method. Checks that a valid request reveives 204
