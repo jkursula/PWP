@@ -105,14 +105,14 @@ def _get_category_json(category_name="cat3"):
 
 def _get_user_json(username="user3"):
     """
-    Creates a valid bankaccount JSON object to be used for PUT and POST tests.
+    Creates a valid user JSON object to be used for PUT and POST tests.
     """
     
     return {"username":"{}".format(username), "password":"En kerro", "bankAccount":["FI01"]}
     
 def _get_transaction_json():
     """
-    Creates a valid bankaccount JSON object to be used for PUT and POST tests.
+    Creates a valid transaction JSON object to be used for PUT and POST tests.
     """
     
     return {"price":10.63, "datetime":"2020-10-10", "sender":"user1", "receiver":"user2", "category":["category1"]}
@@ -152,7 +152,7 @@ def _check_control_delete_method(ctrl, client, obj):
     
 def _check_control_put_method(ctrl, client, obj):
     """
-    Checks a PUT type control from a JSON object be it root document or an item
+    Checks a PUT type control for bankaccount from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
     validates a valid sensor against the schema of the control to ensure that
@@ -175,7 +175,7 @@ def _check_control_put_method(ctrl, client, obj):
     
 def _check_category_control_put_method(ctrl, client, obj):
     """
-    Checks a PUT type control from a JSON object be it root document or an item
+    Checks a PUT type control for category from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
     validates a valid sensor against the schema of the control to ensure that
@@ -198,7 +198,7 @@ def _check_category_control_put_method(ctrl, client, obj):
 
 def _check_user_control_put_method(ctrl, client, obj):
     """
-    Checks a PUT type control from a JSON object be it root document or an item
+    Checks a PUT type control for user from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
     validates a valid sensor against the schema of the control to ensure that
@@ -222,7 +222,7 @@ def _check_user_control_put_method(ctrl, client, obj):
 ''' Not implemented for transaction
 def _check_transaction_control_put_method(ctrl, client, obj):
     """
-    Checks a PUT type control from a JSON object be it root document or an item
+    Checks a PUT type control for transaction from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
     validates a valid sensor against the schema of the control to ensure that
@@ -245,7 +245,7 @@ def _check_transaction_control_put_method(ctrl, client, obj):
     
 def _check_control_post_method(ctrl, client, obj):
     """
-    Checks a POST type control from a JSON object be it root document or an item
+    Checks a POST type control for bankaccount from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
     validates a valid sensor against the schema of the control to ensure that
@@ -268,7 +268,7 @@ def _check_control_post_method(ctrl, client, obj):
     
 def _check_category_control_post_method(ctrl, client, obj):
     """
-    Checks a POST type control from a JSON object be it root document or an item
+    Checks a POST type control for category from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
     validates a valid sensor against the schema of the control to ensure that
@@ -290,7 +290,7 @@ def _check_category_control_post_method(ctrl, client, obj):
     
 def _check_user_control_post_method(ctrl, client, obj):
     """
-    Checks a POST type control from a JSON object be it root document or an item
+    Checks a POST type control for user from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
     validates a valid sensor against the schema of the control to ensure that
@@ -312,7 +312,7 @@ def _check_user_control_post_method(ctrl, client, obj):
     
 def _check_transaction_control_post_method(ctrl, client, obj):
     """
-    Checks a POST type control from a JSON object be it root document or an item
+    Checks a POST type control for transaction from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
     validates a valid sensor against the schema of the control to ensure that
@@ -476,7 +476,7 @@ class TestBankaccountItem(object):
         
 class TestCategoryCollection(object):
     """
-    This class implements tests for each HTTP method in Bankaccount collection
+    This class implements tests for each HTTP method in Category collection
     resource. 
     """
     
@@ -614,7 +614,7 @@ class TestCategoryItem(object):
         
 class TestUserCollection(object):
     """
-    This class implements tests for each HTTP method in Bankaccount collection
+    This class implements tests for each HTTP method in User collection
     resource. 
     """
     
@@ -755,7 +755,7 @@ class TestUserItem(object):
         
 class TestTransactionCollection(object):
     """
-    This class implements tests for each HTTP method in Bankaccount collection
+    This class implements tests for each HTTP method in Transaction collection
     resource. 
     """
     
