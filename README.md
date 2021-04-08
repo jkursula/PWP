@@ -66,7 +66,9 @@ install requirements from requirements.txt file and also:
 run budgethub app using flask by inputting commands
 
 set/export FLASK_APP=budgethub
+
 set/export FLASK_ENV=development
+
 flask run
 
 # Instructions for API testing
