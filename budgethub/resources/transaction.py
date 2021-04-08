@@ -92,7 +92,9 @@ class TransactionCollection(Resource):
                 "implement actual error message"
             )
 
-        return Response(status=201)
+        return Response(status=201, headers={
+            "Location": url_for("api.transactionitem", transaction_id=transaction.id)
+        })
 
 class TransactionItem(Resource):
     def get(self, transaction_id):
@@ -114,7 +116,7 @@ class TransactionItem(Resource):
         body.add_control("self", url_for("api.transactionitem", transaction_id=transaction_id))
         body.add_control("profile", TRANSACTION_PROFILE)
         body.add_control("bumeta:transactions-all", url_for("api.transactioncollection"))
-        body.add_control_delete_transaction(db_transaction)
+        body.add_control_delete_transaction(transaction_id)
 
         return Response(json.dumps(body), 200, mimetype=MASON)
 
