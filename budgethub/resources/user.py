@@ -137,6 +137,7 @@ class UserItem(Resource):
         try:
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             return create_error_response(
                 409, "Already exists",
                 "User with username '{}' already exists.".format(request.json["username"])
