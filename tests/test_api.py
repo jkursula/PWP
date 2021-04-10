@@ -38,26 +38,27 @@ def client():
     os.close(db_fd)
     os.unlink(db_fname)
 
+#Creates bankaccount database item    
 def _get_bankAccount(iban, bankName):
     return BankAccount(
         iban=iban,
         bankName=bankName
     )
 
-
+#creates user database item
 def _get_user(username, password):
     return User(
         username=username,
         password=password
     )
 
-
+#Creates category database item
 def _get_category(name):
     return Category(
         categoryName=name
     )
 
-
+#Creates transaction database item
 def _get_transaction(price, dateTime, sender, receiver, category):
     return Transaction(
         price=price,
@@ -66,7 +67,7 @@ def _get_transaction(price, dateTime, sender, receiver, category):
         receiver=receiver,
         category=category
     )
-
+#Function for populating database with above items
 def populate_db():
 
     bankAccount1 = _get_bankAccount(iban="FI01", bankName="The bank")
@@ -88,6 +89,7 @@ def populate_db():
     db.session.add(category2)
     db.session.add(transaction)
     db.session.commit()
+
     
 def _get_bankaccount_json(iban="FI03"):
     """
@@ -95,6 +97,7 @@ def _get_bankaccount_json(iban="FI03"):
     """
     
     return {"iban":"{}".format(iban), "bankName":"The Bank", "user":["user1"]}
+
     
 def _get_modified_bankaccount_json(iban="FI01"):
     """
@@ -102,6 +105,7 @@ def _get_modified_bankaccount_json(iban="FI01"):
     """
     
     return {"iban":"{}".format(iban), "bankName":"The Bank", "user":["user1"]}
+
     
 def _get_category_json(category_name="cat3"):
     '''
@@ -134,7 +138,7 @@ def _get_modified_user_json(username="user1"):
     
 def _get_transaction_json():
     """
-    Creates a valid bankaccount JSON object to be used for POST tests.
+    Creates a valid transaction JSON object to be used for POST tests.
     """
     
     return {"price":10.63, "datetime":"2020-10-10", "sender":"user1", "receiver":"user2", "category":["cat1"]}
@@ -172,13 +176,14 @@ def _check_control_delete_method(ctrl, client, obj):
     assert method == "delete"
     resp = client.delete(href)
     assert resp.status_code == 204
-    
+
+#For bankaccount    
 def _check_control_put_method(ctrl, client, obj):
     """
     Checks a PUT type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
-    validates a valid sensor against the schema of the control to ensure that
+    validates a valid bankaccount against the schema of the control to ensure that
     they match. Finally checks that using the control results in the correct
     status code of 204.
     """
@@ -201,7 +206,7 @@ def _check_category_control_put_method(ctrl, client, obj):
     Checks a PUT type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
-    validates a valid sensor against the schema of the control to ensure that
+    validates a valid category against the schema of the control to ensure that
     they match. Finally checks that using the control results in the correct
     status code of 204.
     """
@@ -224,7 +229,7 @@ def _check_user_control_put_method(ctrl, client, obj):
     Checks a PUT type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
-    validates a valid sensor against the schema of the control to ensure that
+    validates a valid user against the schema of the control to ensure that
     they match. Finally checks that using the control results in the correct
     status code of 204.
     """
@@ -248,7 +253,7 @@ def _check_transaction_control_put_method(ctrl, client, obj):
     Checks a PUT type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
-    validates a valid sensor against the schema of the control to ensure that
+    validates a valid transaction against the schema of the control to ensure that
     they match. Finally checks that using the control results in the correct
     status code of 204.
     """
@@ -265,13 +270,14 @@ def _check_transaction_control_put_method(ctrl, client, obj):
     validate(body, schema)
     resp = client.put(href, json=body)
     assert resp.status_code == 204'''
-    
+
+#For bankaccount
 def _check_control_post_method(ctrl, client, obj):
     """
     Checks a POST type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
-    validates a valid sensor against the schema of the control to ensure that
+    validates a valid bankaccount against the schema of the control to ensure that
     they match. Finally checks that using the control results in the correct
     status code of 201.
     """
@@ -294,7 +300,7 @@ def _check_category_control_post_method(ctrl, client, obj):
     Checks a POST type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
-    validates a valid sensor against the schema of the control to ensure that
+    validates a valid category against the schema of the control to ensure that
     they match. Finally checks that using the control results in the correct
     status code of 201.
     """
@@ -316,7 +322,7 @@ def _check_user_control_post_method(ctrl, client, obj):
     Checks a POST type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
-    validates a valid sensor against the schema of the control to ensure that
+    validates a valid user against the schema of the control to ensure that
     they match. Finally checks that using the control results in the correct
     status code of 201.
     """
@@ -338,7 +344,7 @@ def _check_transaction_control_post_method(ctrl, client, obj):
     Checks a POST type control from a JSON object be it root document or an item
     in a collection. In addition to checking the "href" attribute, also checks
     that method, encoding and schema can be found from the control. Also
-    validates a valid sensor against the schema of the control to ensure that
+    validates a valid transaction against the schema of the control to ensure that
     they match. Finally checks that using the control results in the correct
     status code of 201.
     """
@@ -447,7 +453,7 @@ class TestBankaccountItem(object):
         """
         Tests the PUT method. Checks all of the possible erroe codes, and also
         checks that a valid request receives a 204 response. Also tests that
-        when name is changed, the sensor can be found from a its new URI. 
+        when name is changed, the bankaccount can be found from a its new URI. 
         """
         
         valid = _get_bankaccount_json()
@@ -485,8 +491,8 @@ class TestBankaccountItem(object):
     def test_delete(self, client):
         """
         Tests the DELETE method. Checks that a valid request reveives 204
-        response and that trying to GET the sensor afterwards results in 404.
-        Also checks that trying to delete a sensor that doesn't exist results
+        response and that trying to GET the bankaccount afterwards results in 404.
+        Also checks that trying to delete a bankaccount that doesn't exist results
         in 404.
         """
         
@@ -551,7 +557,7 @@ class TestCategoryCollection(object):
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
         
-        # remove iban field for 400
+        # remove category_name field for 400
         valid.pop("category_name")
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 400
@@ -585,9 +591,9 @@ class TestCategoryItem(object):
 
     def test_put(self, client):
         """
-        Tests the PUT method. Checks all of the possible erroe codes, and also
+        Tests the PUT method. Checks all of the possible error codes, and also
         checks that a valid request receives a 204 response. Also tests that
-        when name is changed, the sensor can be found from a its new URI. 
+        when name is changed, the category can be found from a its new URI. 
         """
         
         valid = _get_category_json()
@@ -599,12 +605,12 @@ class TestCategoryItem(object):
         resp = client.put(self.INVALID_URL, json=valid)
         assert resp.status_code == 404
         
-        # test with another bankaccounts iban 
+        # test with another category's name 
         valid["category_name"] = "cat2"
         resp = client.put(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
         
-        #Not possible for category
+        
         # test with valid (only change model)
         valid["category_name"] = "cat50"
         resp = client.put(self.RESOURCE_URL, json=valid)
@@ -625,8 +631,8 @@ class TestCategoryItem(object):
     def test_delete(self, client):
         """
         Tests the DELETE method. Checks that a valid request reveives 204
-        response and that trying to GET the sensor afterwards results in 404.
-        Also checks that trying to delete a sensor that doesn't exist results
+        response and that trying to GET the category afterwards results in 404.
+        Also checks that trying to delete a category that doesn't exist results
         in 404.
         """
         
@@ -692,7 +698,7 @@ class TestUserCollection(object):
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
         
-        # remove iban field for 400
+        # remove username field for 400
         valid.pop("username")
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 400
@@ -729,7 +735,7 @@ class TestUserItem(object):
         """
         Tests the PUT method. Checks all of the possible erroe codes, and also
         checks that a valid request receives a 204 response. Also tests that
-        when name is changed, the sensor can be found from a its new URI. 
+        when name is changed, the user can be found from a its new URI. 
         """
         
         valid = _get_user_json()
@@ -742,7 +748,7 @@ class TestUserItem(object):
         resp = client.put(self.INVALID_URL, json=valid)
         assert resp.status_code == 404
         
-        # test with another bankaccounts iban 
+        # test with another users username 
         valid["username"] = "user2"
         resp = client.put(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
@@ -767,8 +773,8 @@ class TestUserItem(object):
     def test_delete(self, client):
         """
         Tests the DELETE method. Checks that a valid request reveives 204
-        response and that trying to GET the sensor afterwards results in 404.
-        Also checks that trying to delete a sensor that doesn't exist results
+        response and that trying to GET the user afterwards results in 404.
+        Also checks that trying to delete a user that doesn't exist results
         in 404.
         """
         
@@ -781,7 +787,7 @@ class TestUserItem(object):
        
 class TestTransactionCollection(object):
     """
-    This class implements tests for each HTTP method in Bankaccount collection
+    This class implements tests for each HTTP method in Transaction collection
     resource. 
     """
     
@@ -834,7 +840,7 @@ class TestTransactionCollection(object):
         #resp = client.post(self.RESOURCE_URL, json=valid)
         #assert resp.status_code == 409
         
-        # remove iban field for 400
+        # remove price field for 400
         valid.pop("price")
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 400
@@ -873,7 +879,7 @@ class TestTransactionItem(object):
         """
         Tests the PUT method. Checks all of the possible erroe codes, and also
         checks that a valid request receives a 204 response. Also tests that
-        when name is changed, the sensor can be found from a its new URI. 
+        when name is changed, the transaction can be found from a its new URI. 
         """
         
         valid = _get_transaction_json()
@@ -885,7 +891,7 @@ class TestTransactionItem(object):
         resp = client.put(self.INVALID_URL, json=valid)
         assert resp.status_code == 404
         
-        # test with another bankaccounts iban 
+        # test with another transactions sender 
         valid["username"] = "user2"
         resp = client.put(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
@@ -910,8 +916,8 @@ class TestTransactionItem(object):
     def test_delete(self, client):
         """
         Tests the DELETE method. Checks that a valid request reveives 204
-        response and that trying to GET the sensor afterwards results in 404.
-        Also checks that trying to delete a sensor that doesn't exist results
+        response and that trying to GET the transaction afterwards results in 404.
+        Also checks that trying to delete a transaction that doesn't exist results
         in 404.
         """
         
