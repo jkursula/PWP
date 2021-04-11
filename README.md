@@ -72,4 +72,4 @@ pytest, pytest-cov using pip.
 
 run *pytest --cov-report term-missing --cov=budgethub*
 
-This will run both database and API test simultaneously and also provide with covarience report with score of 97/100
+This will run both database and API test simultaneously and also provide with covariance report with score of 97/100
