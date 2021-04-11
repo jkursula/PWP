@@ -53,17 +53,11 @@ _timer = time.perf_counter()  ==>  _timer = time.perf_counter
 
 SQLite
 
-# Instructions for database testing
-
-Go to database folder and run pytest.
-This does the database framework, external libraries, database population and 
-test run setup automatically.
-
 # Instructions for running API 
 install requirements from requirements.txt file and also: 
 "flask", "flask-restful", "flask-sqlalchemy", "SQLAlchemy" using pip
         
-run budgethub app using flask by inputting commands
+run budgethub app using flask by inputting commands:
 
 *set/export FLASK_APP=budgethub*
 
@@ -71,11 +65,11 @@ run budgethub app using flask by inputting commands
 
 *flask run*
 
-# Instructions for API testing
-
-## Remember to run the API test from the api_test.py file in the root level and not in tests folder
+# Instructions for testing
 
 Same requirements as running the API but install also:
 pytest, pytest-cov using pip.
 
-run *pytest --cov-report term-missing --cov=budgethub test_api.py*
+run *pytest --cov-report term-missing --cov=budgethub*
+
+This will run both database and API test simultaneously and also provide with covarience report with score of 97/100
