@@ -73,6 +73,8 @@ run budgethub app using flask by inputting commands
 
 # Instructions for API testing
 
+## Remember to run the API test from the api_test.py file in the root level and not in tests folder
+
 Same requirements as running the API but install also:
 pytest, pytest-cov using pip.
 
