@@ -5,7 +5,7 @@
 * Student 2. Essi Passoja essi.passoja@gmail.com
 * Student 3. Tapio Kursula  tkursula@gmail.com
 
-# DL2
+
 # Dependencies: (from requirements.txt file)
 <ul>
 <li>aniso8601==6.0.0</li>
