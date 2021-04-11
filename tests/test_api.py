@@ -3,6 +3,7 @@ import os
 import pytest
 import tempfile
 import time
+
 from datetime import datetime
 from jsonschema import validate
 from sqlalchemy.engine import Engine
@@ -11,6 +12,7 @@ from sqlalchemy.exc import IntegrityError, StatementError
 
 from budgethub import db, create_app
 from budgethub.models import Transaction, BankAccount, User, Category
+import tests.utils as utils
 
 #development app
 app = create_app()
@@ -38,47 +40,18 @@ def client():
     os.close(db_fd)
     os.unlink(db_fname)
 
-#Creates bankaccount database item    
-def _get_bankAccount(iban, bankName):
-    return BankAccount(
-        iban=iban,
-        bankName=bankName
-    )
-
-#creates user database item
-def _get_user(username, password):
-    return User(
-        username=username,
-        password=password
-    )
-
-#Creates category database item
-def _get_category(name):
-    return Category(
-        categoryName=name
-    )
-
-#Creates transaction database item
-def _get_transaction(price, dateTime, sender, receiver, category):
-    return Transaction(
-        price=price,
-        dateTime=dateTime,
-        sender=sender,
-        receiver=receiver,
-        category=category
-    )
 #Function for populating database with above items
 def populate_db():
 
-    bankAccount1 = _get_bankAccount(iban="FI01", bankName="The bank")
-    bankAccount2 = _get_bankAccount(iban="FI02", bankName="The bank")
-    user1 = _get_user(username="user1", password="password")
-    user2 = _get_user(username="user2", password="password2")
+    bankAccount1 = utils._get_bankAccount(iban="FI01", bankName="The bank")
+    bankAccount2 = utils._get_bankAccount(iban="FI02", bankName="The bank")
+    user1 = utils._get_user(username="user1", password="password")
+    user2 = utils._get_user(username="user2", password="password2")
     user1.bankAccount.append(bankAccount1)
     user2.bankAccount.append(bankAccount2)
-    category1 = _get_category(name="cat1")
-    category2 = _get_category(name="cat2")
-    transaction = _get_transaction(price=3.50, dateTime=datetime.now(), sender=user1, receiver=user2,
+    category1 = utils._get_category(name="cat1")
+    category2 = utils._get_category(name="cat2")
+    transaction = utils._get_transaction(price=3.50, dateTime=datetime.now(), sender=user1, receiver=user2,
                                     category=[category1])
 
     db.session.add(bankAccount1)
@@ -91,275 +64,6 @@ def populate_db():
     db.session.commit()
 
     
-def _get_bankaccount_json(iban="FI03"):
-    """
-    Creates a valid bankaccount JSON object to be used for POST tests.
-    """
-    
-    return {"iban":"{}".format(iban), "bankName":"The Bank", "user":["user1"]}
-
-    
-def _get_modified_bankaccount_json(iban="FI01"):
-    """
-    Creates a valid bankaccount JSON object to be used for PUT  tests.
-    """
-    
-    return {"iban":"{}".format(iban), "bankName":"The Bank", "user":["user1"]}
-
-    
-def _get_category_json(category_name="cat3"):
-    '''
-    Creates valid category json object to be used for post test
-    '''
-    
-    return {"category_name":"{}".format(category_name), "transaction":["1"]}
-    
-def _get_modified_category_json(category_name="cat50"):
-    '''
-    Creates valid category json object to be used for put test
-    '''
-    
-    return {"category_name":"{}".format(category_name), "transaction":["1"]}
- 
-
-def _get_user_json(username="user3"):
-    """
-    Creates a valid user JSON object to be used for POST tests.
-    """
-    
-    return {"username":"{}".format(username), "password":"En kerro", "bankAccount":["FI01"]}
-    
-def _get_modified_user_json(username="user1"):
-    """
-    Creates a valid user JSON object to be used for PUT tests.
-    """
-    
-    return {"username":"{}".format(username), "password":"test", "bankAccount":["FI01"]}
-    
-def _get_transaction_json():
-    """
-    Creates a valid transaction JSON object to be used for POST tests.
-    """
-    
-    return {"price":10.63, "datetime":"2020-10-10", "sender":"user1", "receiver":"user2", "category":["cat1"]}
-
-    
-def _check_namespace(client, response):
-    """
-    Checks that the "bumeta" namespace is found from the response body, and
-    that its "name" attribute is a URL that can be accessed.
-    """
-    
-    ns_href = response["@namespaces"]["bumeta"]["name"]
-    resp = client.get(ns_href)
-    assert resp.status_code == 200
-    
-def _check_control_get_method(ctrl, client, obj):
-    """
-    Checks a GET type control from a JSON object be it root document or an item
-    in a collection. Also checks that the URL of the control can be accessed.
-    """
-    
-    href = obj["@controls"][ctrl]["href"]
-    resp = client.get(href)
-    assert resp.status_code == 200
-    
-def _check_control_delete_method(ctrl, client, obj):
-    """
-    Checks a DELETE type control from a JSON object be it root document or an
-    item in a collection. Checks the contrl's method in addition to its "href".
-    Also checks that using the control results in the correct status code of 204.
-    """
-    
-    href = obj["@controls"][ctrl]["href"]
-    method = obj["@controls"][ctrl]["method"].lower()
-    assert method == "delete"
-    resp = client.delete(href)
-    assert resp.status_code == 204
-
-#For bankaccount    
-def _check_control_put_method(ctrl, client, obj):
-    """
-    Checks a PUT type control from a JSON object be it root document or an item
-    in a collection. In addition to checking the "href" attribute, also checks
-    that method, encoding and schema can be found from the control. Also
-    validates a valid bankaccount against the schema of the control to ensure that
-    they match. Finally checks that using the control results in the correct
-    status code of 204.
-    """
-    
-    ctrl_obj = obj["@controls"][ctrl]
-    href = ctrl_obj["href"]
-    method = ctrl_obj["method"].lower()
-    encoding = ctrl_obj["encoding"].lower()
-    schema = ctrl_obj["schema"]
-    assert method == "put"
-    assert encoding == "json"
-    body = _get_bankaccount_json()
-    body["iban"] = obj["iban"]
-    validate(body, schema)
-    resp = client.put(href, json=body)
-    assert resp.status_code == 204
-    
-def _check_category_control_put_method(ctrl, client, obj):
-    """
-    Checks a PUT type control from a JSON object be it root document or an item
-    in a collection. In addition to checking the "href" attribute, also checks
-    that method, encoding and schema can be found from the control. Also
-    validates a valid category against the schema of the control to ensure that
-    they match. Finally checks that using the control results in the correct
-    status code of 204.
-    """
-    
-    ctrl_obj = obj["@controls"][ctrl]
-    href = ctrl_obj["href"]
-    method = ctrl_obj["method"].lower()
-    encoding = ctrl_obj["encoding"].lower()
-    schema = ctrl_obj["schema"]
-    assert method == "put"
-    assert encoding == "json"
-    body = _get_bankaccount_json()
-    body["category_name"] = obj["category_name"]
-    validate(body, schema)
-    resp = client.put(href, json=body)
-    assert resp.status_code == 204
-
-def _check_user_control_put_method(ctrl, client, obj):
-    """
-    Checks a PUT type control from a JSON object be it root document or an item
-    in a collection. In addition to checking the "href" attribute, also checks
-    that method, encoding and schema can be found from the control. Also
-    validates a valid user against the schema of the control to ensure that
-    they match. Finally checks that using the control results in the correct
-    status code of 204.
-    """
-    
-    ctrl_obj = obj["@controls"][ctrl]
-    href = ctrl_obj["href"]
-    method = ctrl_obj["method"].lower()
-    encoding = ctrl_obj["encoding"].lower()
-    schema = ctrl_obj["schema"]
-    assert method == "put"
-    assert encoding == "json"
-    body = _get_user_json()
-    body["username"] = obj["username"]
-    validate(body, schema)
-    resp = client.put(href, json=body)
-    assert resp.status_code == 204
-    
-''' Not implemented for transaction
-def _check_transaction_control_put_method(ctrl, client, obj):
-    """
-    Checks a PUT type control from a JSON object be it root document or an item
-    in a collection. In addition to checking the "href" attribute, also checks
-    that method, encoding and schema can be found from the control. Also
-    validates a valid transaction against the schema of the control to ensure that
-    they match. Finally checks that using the control results in the correct
-    status code of 204.
-    """
-    
-    ctrl_obj = obj["@controls"][ctrl]
-    href = ctrl_obj["href"]
-    method = ctrl_obj["method"].lower()
-    encoding = ctrl_obj["encoding"].lower()
-    schema = ctrl_obj["schema"]
-    assert method == "put"
-    assert encoding == "json"
-    body = _get_transaction_json()
-    body["id"] = obj["id"]
-    validate(body, schema)
-    resp = client.put(href, json=body)
-    assert resp.status_code == 204'''
-
-#For bankaccount
-def _check_control_post_method(ctrl, client, obj):
-    """
-    Checks a POST type control from a JSON object be it root document or an item
-    in a collection. In addition to checking the "href" attribute, also checks
-    that method, encoding and schema can be found from the control. Also
-    validates a valid bankaccount against the schema of the control to ensure that
-    they match. Finally checks that using the control results in the correct
-    status code of 201.
-    """
-    
-    ctrl_obj = obj["@controls"][ctrl]
-    href = ctrl_obj["href"]
-    method = ctrl_obj["method"].lower()
-    encoding = ctrl_obj["encoding"].lower()
-    schema = ctrl_obj["schema"]
-    assert method == "post"
-    assert encoding == "json"
-    body = _get_bankaccount_json()
-    validate(body, schema)
-    resp = client.post(href, json=body)
-    assert resp.status_code == 201
-    
-    
-def _check_category_control_post_method(ctrl, client, obj):
-    """
-    Checks a POST type control from a JSON object be it root document or an item
-    in a collection. In addition to checking the "href" attribute, also checks
-    that method, encoding and schema can be found from the control. Also
-    validates a valid category against the schema of the control to ensure that
-    they match. Finally checks that using the control results in the correct
-    status code of 201.
-    """
-    
-    ctrl_obj = obj["@controls"][ctrl]
-    href = ctrl_obj["href"]
-    method = ctrl_obj["method"].lower()
-    encoding = ctrl_obj["encoding"].lower()
-    schema = ctrl_obj["schema"]
-    assert method == "post"
-    assert encoding == "json"
-    body = _get_category_json()
-    validate(body, schema)
-    resp = client.post(href, json=body)
-    assert resp.status_code == 201
-    
-def _check_user_control_post_method(ctrl, client, obj):
-    """
-    Checks a POST type control from a JSON object be it root document or an item
-    in a collection. In addition to checking the "href" attribute, also checks
-    that method, encoding and schema can be found from the control. Also
-    validates a valid user against the schema of the control to ensure that
-    they match. Finally checks that using the control results in the correct
-    status code of 201.
-    """
-    
-    ctrl_obj = obj["@controls"][ctrl]
-    href = ctrl_obj["href"]
-    method = ctrl_obj["method"].lower()
-    encoding = ctrl_obj["encoding"].lower()
-    schema = ctrl_obj["schema"]
-    assert method == "post"
-    assert encoding == "json"
-    body = _get_user_json()
-    validate(body, schema)
-    resp = client.post(href, json=body)
-    assert resp.status_code == 201
-    
-def _check_transaction_control_post_method(ctrl, client, obj):
-    """
-    Checks a POST type control from a JSON object be it root document or an item
-    in a collection. In addition to checking the "href" attribute, also checks
-    that method, encoding and schema can be found from the control. Also
-    validates a valid transaction against the schema of the control to ensure that
-    they match. Finally checks that using the control results in the correct
-    status code of 201.
-    """
-    
-    ctrl_obj = obj["@controls"][ctrl]
-    href = ctrl_obj["href"]
-    method = ctrl_obj["method"].lower()
-    encoding = ctrl_obj["encoding"].lower()
-    schema = ctrl_obj["schema"]
-    assert method == "post"
-    assert encoding == "json"
-    body = _get_transaction_json()
-    validate(body, schema)
-    resp = client.post(href, json=body)
-    assert resp.status_code == 201
 
 class TestBankaccountCollection(object):
     """
@@ -380,12 +84,12 @@ class TestBankaccountCollection(object):
         resp = client.get(self.RESOURCE_URL)
         assert resp.status_code == 200
         body = json.loads(resp.data)
-        _check_namespace(client, body)
-        _check_control_post_method("bumeta:add-bank-account", client, body)
+        utils._check_namespace(client, body)
+        utils._check_control_post_method("bumeta:add-bank-account", client, body)
         assert len(body["items"]) == 2
         for item in body["items"]:
-            _check_control_get_method("self", client, item)
-            _check_control_get_method("profile", client, item)
+            utils._check_control_get_method("self", client, item)
+            utils._check_control_get_method("profile", client, item)
             assert "iban" in item
             assert "bankName" in item
 
@@ -396,7 +100,7 @@ class TestBankaccountCollection(object):
         location header that leads into the newly created resource.
         """
         
-        valid = _get_bankaccount_json()
+        valid = utils._get_bankaccount_json()
         
         # test with wrong content type
         resp = client.post(self.RESOURCE_URL, data=json.dumps(valid))
@@ -441,11 +145,11 @@ class TestBankaccountItem(object):
         body = json.loads(resp.data)
         assert body["iban"] == "FI01"
         assert body["bankName"] == "The bank"
-        _check_namespace(client, body)
-        _check_control_get_method("profile", client, body)
-        _check_control_get_method("bumeta:banks-all", client, body)
-        _check_control_put_method("edit", client, body)
-        _check_control_delete_method("bumeta:delete", client, body)
+        utils._check_namespace(client, body)
+        utils._check_control_get_method("profile", client, body)
+        utils._check_control_get_method("bumeta:banks-all", client, body)
+        utils._check_control_put_method("edit", client, body)
+        utils._check_control_delete_method("bumeta:delete", client, body)
         resp = client.get(self.INVALID_URL)
         assert resp.status_code == 404
 
@@ -456,8 +160,8 @@ class TestBankaccountItem(object):
         when name is changed, the bankaccount can be found from a its new URI. 
         """
         
-        valid = _get_bankaccount_json()
-        validmod = _get_modified_bankaccount_json()
+        valid = utils._get_bankaccount_json()
+        validmod = utils._get_modified_bankaccount_json()
         
         # test with wrong content type
         resp = client.put(self.RESOURCE_URL, data=json.dumps(valid))
@@ -481,7 +185,7 @@ class TestBankaccountItem(object):
         resp = client.put(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 400
         
-        valid = _get_bankaccount_json()
+        valid = utils._get_bankaccount_json()
         resp = client.put(self.RESOURCE_URL, json=valid)
         resp = client.get(self.MODIFIED_URL)
         assert resp.status_code == 200
@@ -523,12 +227,12 @@ class TestCategoryCollection(object):
         resp = client.get(self.RESOURCE_URL)
         assert resp.status_code == 200
         body = json.loads(resp.data)
-        _check_namespace(client, body)
-        _check_category_control_post_method("bumeta:add-category", client, body)
+        utils._check_namespace(client, body)
+        utils._check_category_control_post_method("bumeta:add-category", client, body)
         assert len(body["items"]) == 2
         for item in body["items"]:
-            _check_control_get_method("self", client, item)
-            _check_control_get_method("profile", client, item)
+            utils._check_control_get_method("self", client, item)
+            utils._check_control_get_method("profile", client, item)
             assert "category_name" in item
 
     def test_post(self, client):
@@ -538,7 +242,7 @@ class TestCategoryCollection(object):
         location header that leads into the newly created resource.
         """
         
-        valid = _get_category_json()
+        valid = utils._get_category_json()
         
         # test with wrong content type
         resp = client.post(self.RESOURCE_URL, data=json.dumps(valid))
@@ -581,11 +285,11 @@ class TestCategoryItem(object):
         assert resp.status_code == 200
         body = json.loads(resp.data)
         assert body["category_name"] == "cat1"
-        _check_namespace(client, body)
-        _check_control_get_method("profile", client, body)
-        _check_control_get_method("bumeta:categories-all", client, body)
-        _check_category_control_put_method("edit", client, body)
-        _check_control_delete_method("bumeta:delete", client, body)
+        utils._check_namespace(client, body)
+        utils._check_control_get_method("profile", client, body)
+        utils._check_control_get_method("bumeta:categories-all", client, body)
+        utils._check_category_control_put_method("edit", client, body)
+        utils._check_control_delete_method("bumeta:delete", client, body)
         resp = client.get(self.INVALID_URL)
         assert resp.status_code == 404
 
@@ -596,7 +300,7 @@ class TestCategoryItem(object):
         when name is changed, the category can be found from a its new URI. 
         """
         
-        valid = _get_category_json()
+        valid = utils._get_category_json()
         
         # test with wrong content type
         resp = client.put(self.RESOURCE_URL, data=json.dumps(valid))
@@ -621,7 +325,7 @@ class TestCategoryItem(object):
         resp = client.put(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 400'''
         
-        validmod = _get_modified_category_json()
+        validmod = utils._get_modified_category_json()
         resp = client.put(self.RESOURCE_URL, json=valid)
         resp = client.get(self.MODIFIED_URL)
         assert resp.status_code == 200
@@ -662,12 +366,12 @@ class TestUserCollection(object):
         resp = client.get(self.RESOURCE_URL)
         assert resp.status_code == 200
         body = json.loads(resp.data)
-        _check_namespace(client, body)
-        _check_user_control_post_method("bumeta:add-user", client, body)
+        utils._check_namespace(client, body)
+        utils._check_user_control_post_method("bumeta:add-user", client, body)
         assert len(body["items"]) == 2
         for item in body["items"]:
-            _check_control_get_method("self", client, item)
-            _check_control_get_method("profile", client, item)
+            utils._check_control_get_method("self", client, item)
+            utils._check_control_get_method("profile", client, item)
             assert "username" in item
             #assert "password" in item
 
@@ -678,7 +382,7 @@ class TestUserCollection(object):
         location header that leads into the newly created resource.
         """
         
-        valid = _get_user_json()
+        valid = utils._get_user_json()
         
         # test with wrong content type
         resp = client.post(self.RESOURCE_URL, data=json.dumps(valid))
@@ -723,11 +427,11 @@ class TestUserItem(object):
         body = json.loads(resp.data)
         assert body["username"] == "user1"
         assert body["bankAccount"] == ["FI01"]
-        _check_namespace(client, body)
-        _check_control_get_method("profile", client, body)
-        _check_control_get_method("bumeta:users-all", client, body)
-        _check_user_control_put_method("edit", client, body)
-        _check_control_delete_method("bumeta:delete", client, body)
+        utils._check_namespace(client, body)
+        utils._check_control_get_method("profile", client, body)
+        utils._check_control_get_method("bumeta:users-all", client, body)
+        utils._check_user_control_put_method("edit", client, body)
+        utils._check_control_delete_method("bumeta:delete", client, body)
         resp = client.get(self.INVALID_URL)
         assert resp.status_code == 404
 
@@ -738,8 +442,8 @@ class TestUserItem(object):
         when name is changed, the user can be found from a its new URI. 
         """
         
-        valid = _get_user_json()
-        validmod = _get_modified_user_json()
+        valid = utils._get_user_json()
+        validmod = utils._get_modified_user_json()
         
         # test with wrong content type
         resp = client.put(self.RESOURCE_URL, data=json.dumps(valid))
@@ -763,7 +467,7 @@ class TestUserItem(object):
         resp = client.put(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 400
         
-        valid = _get_user_json()
+        valid = utils._get_user_json()
         resp = client.put(self.RESOURCE_URL, json=valid)
         resp = client.get(self.MODIFIED_URL)
         assert resp.status_code == 200
@@ -804,12 +508,12 @@ class TestTransactionCollection(object):
         resp = client.get(self.RESOURCE_URL)
         assert resp.status_code == 200
         body = json.loads(resp.data)
-        _check_namespace(client, body)
-        _check_transaction_control_post_method("bumeta:add-transaction", client, body)
+        utils._check_namespace(client, body)
+        utils._check_transaction_control_post_method("bumeta:add-transaction", client, body)
         assert len(body["items"]) == 1
         for item in body["items"]:
-            _check_control_get_method("self", client, item)
-            _check_control_get_method("profile", client, item)
+            utils._check_control_get_method("self", client, item)
+            utils._check_control_get_method("profile", client, item)
             assert "id" in item
             #assert "password" in item
 
@@ -820,7 +524,7 @@ class TestTransactionCollection(object):
         location header that leads into the newly created resource.
         """
         
-        valid = _get_transaction_json()
+        valid = utils._get_transaction_json()
         
         # test with wrong content type
         resp = client.post(self.RESOURCE_URL, data=json.dumps(valid))
@@ -865,11 +569,11 @@ class TestTransactionItem(object):
         body = json.loads(resp.data)
         assert body["receiver"] == "user2"
         assert body["sender"] == "user1"
-        _check_namespace(client, body)
-        _check_control_get_method("profile", client, body)
-        _check_control_get_method("bumeta:transactions-all", client, body)
+        utils._check_namespace(client, body)
+        utils._check_control_get_method("profile", client, body)
+        utils._check_control_get_method("bumeta:transactions-all", client, body)
         #_check_transaction_control_put_method("edit", client, body)
-        _check_control_delete_method("bumeta:delete", client, body)
+        utils._check_control_delete_method("bumeta:delete", client, body)
         resp = client.get(self.INVALID_URL)
         assert resp.status_code == 404
 
