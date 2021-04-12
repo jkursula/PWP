@@ -1,5 +1,6 @@
 import os
-from flask import Flask
+import json
+from flask import Flask, Response
 from flask_sqlalchemy import SQLAlchemy
 from budgethub.constants import *
 
@@ -40,6 +41,16 @@ def create_app(test_config=None):
     @app.route("/profiles/<profile>/")
     def send_profile(profile):
         return "you requests {} profile".format(profile)
+    
+    @app.route("/api/")
+    def entry():
+        body = utils.MasonBuilder()
+        body.add_namespace("bumeta", "/bumeta/link-relations/")
+        body.add_control("bumeta:transactions-all", "/api/transactions/", method="GET")
+        body.add_control("bumeta:users-all", "/api/users/", method="GET")
+        body.add_control("bumeta:bankaccounts-all", "/api/bankaccounts/", method="GET")
+        body.add_control("bumeta:categories-all", "/api/categories/", method="GET")
+        return Response(json.dumps(body), 200, mimetype=MASON)
 
     # @app.route("/admin/")
     # def admin_site():
