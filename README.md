@@ -54,6 +54,9 @@ _timer = time.perf_counter()  ==>  _timer = time.perf_counter
 SQLite
 
 # Instructions for running API 
+
+**Run all commands from root level of the repository**
+
 install requirements from requirements.txt file and also: 
 
 "flask", "flask-restful", "flask-sqlalchemy", "SQLAlchemy" using pip
@@ -77,6 +80,8 @@ install requirements from requirements.txt file and also:
 *flask run*
 
 # Instructions for testing
+
+**Run all commands from root level of the repository**
 
 Same requirements as running the API but install also:
 pytest, pytest-cov using pip. Then issue following command:
