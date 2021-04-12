@@ -64,7 +64,24 @@ def populate_db():
     db.session.commit()
 
     
+class TestEntryPoint(object):
 
+    #Test that the api's entry point is accessible
+    # and also checks that all the controls are working correctly
+    
+    RESOURCE_URL = "/api/"
+    
+    def test_get(self, client):
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        utils._check_namespace(client, body)
+        assert len(body["@controls"]) == 4
+        utils._check_control_get_method("bumeta:transactions-all", client, body)
+        utils._check_control_get_method("bumeta:users-all", client, body)
+        utils._check_control_get_method("bumeta:bankaccounts-all", client, body)
+        utils._check_control_get_method("bumeta:categories-all", client, body)
+    
 class TestBankaccountCollection(object):
     """
     This class implements tests for each HTTP method in Bankaccount collection
