@@ -56,6 +56,7 @@ SQLite
 # Instructions for running API 
 install requirements from requirements.txt file and also: 
 "flask", "flask-restful", "flask-sqlalchemy", "SQLAlchemy" using pip
+
 set enviroment variables by issuing commands:
 
 *set/export FLASK_APP=budgethub*
