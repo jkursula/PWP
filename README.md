@@ -56,12 +56,21 @@ SQLite
 # Instructions for running API 
 install requirements from requirements.txt file and also: 
 "flask", "flask-restful", "flask-sqlalchemy", "SQLAlchemy" using pip
-        
-run budgethub app using flask by inputting commands:
+set enviroment variables by issuing commands:
 
 *set/export FLASK_APP=budgethub*
 
 *set/export FLASK_ENV=development*
+
+Initialize database by issuing command:
+
+*flask init-db*
+
+Populate database with sample data by issuing command:
+
+*python populate_db.py*
+
+run budgethub app using flask by inputting command:
 
 *flask run*
 
