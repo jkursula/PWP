@@ -79,8 +79,8 @@ install requirements from requirements.txt file and also:
 # Instructions for testing
 
 Same requirements as running the API but install also:
-pytest, pytest-cov using pip.
+pytest, pytest-cov using pip. Then issue following command:
 
-**run** *pytest --cov-report term-missing --cov=budgethub*
+*pytest --cov-report term-missing --cov=budgethub*
 
 This will run both database and API test simultaneously and also provide with covariance report with score of 97/100
