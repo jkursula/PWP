@@ -52,8 +52,8 @@ def create_app(test_config=None):
         body.add_control("bumeta:categories-all", "/api/categories/", method="GET")
         return Response(json.dumps(body), 200, mimetype=MASON)
 
-    # @app.route("/admin/")
-    # def admin_site():
-    #     return app.send_static_file("html/admin.html")
+    @app.route("/admin/")
+    def admin_site():
+        return app.send_static_file("html/admin.html")
 
     return app
