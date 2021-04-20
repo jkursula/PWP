@@ -308,6 +308,7 @@ function renderTransaction(body) {
         body.location + "' readonly>"
     );*/
     $("div.button").html('<button class="btn_delete">DELETE</button>');
+    $("div.button").click(deleteData(body["@controls"]["bumeta:delete"].href));
 }
 
 function renderUser(body) {
@@ -330,6 +331,7 @@ function renderUser(body) {
         body.location + "' readonly>"
     );
     $("div.button").html('<button class="btn_delete">DELETE</button>');
+    $("div.button").click(deleteData(body["@controls"]["bumeta:delete"].href));
 }
 
 function renderBankAccount(body) {
@@ -353,6 +355,7 @@ function renderBankAccount(body) {
         body.location + "' readonly>"
     );
     $("div.button").html('<button class="btn_delete">DELETE</button>');
+    $("div.button").click(deleteData(body["@controls"]["bumeta:delete"].href));
 }
 
 function renderCategory(body) {
@@ -374,6 +377,7 @@ function renderCategory(body) {
         body.location + "' readonly>"
     );
     $("div.button").html('<button class="btn_delete">DELETE</button>');
+    $("div.button").click(deleteData(body["@controls"]["bumeta:delete"].href));
 }
 function renderTransactions(body) {
     $("div.navigation").empty()
