@@ -307,6 +307,7 @@ function renderTransaction(body) {
         "<input type='text' name='location' value='" +
         body.location + "' readonly>"
     );*/
+    $("div.button").html('<button class="btn_delete">DELETE</button>');
 }
 
 function renderUser(body) {
@@ -328,6 +329,7 @@ function renderUser(body) {
         "<input type='text' name='location' value='" +
         body.location + "' readonly>"
     );
+    $("div.button").html('<button class="btn_delete">DELETE</button>');
 }
 
 function renderBankAccount(body) {
@@ -350,6 +352,7 @@ function renderBankAccount(body) {
         "<input type='text' name='location' value='" +
         body.location + "' readonly>"
     );
+    $("div.button").html('<button class="btn_delete">DELETE</button>');
 }
 
 function renderCategory(body) {
@@ -370,6 +373,7 @@ function renderCategory(body) {
         "<input type='text' name='location' value='" +
         body.location + "' readonly>"
     );
+    $("div.button").html('<button class="btn_delete">DELETE</button>');
 }
 function renderTransactions(body) {
     $("div.navigation").empty()
