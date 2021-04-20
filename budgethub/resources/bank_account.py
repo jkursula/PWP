@@ -104,7 +104,7 @@ class BankAccountItem(Resource):
             validate(request.json, BankAccountBuilder.bank_account_schema())
         except ValidationError as e:
             return create_error_response(400, "Invalid JSON document", str(e))
-
+        """
         for user in request.json["user"]:
             db_user = User.query.filter_by(username=user).first()
             if db_user is None:
@@ -112,7 +112,7 @@ class BankAccountItem(Resource):
                     404, "Not found",
                     "No user was found with one or several of the username(s) {}".format(request.json["user"])
                 )
-            db_bank.user.append(db_user)
+            db_bank.user.append(db_user)"""
 
         db_bank.iban = request.json["iban"]
         db_bank.bankName = request.json["bankName"]
