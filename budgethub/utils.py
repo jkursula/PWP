@@ -121,7 +121,7 @@ class TransactionBuilder(MasonBuilder):
     def add_control_add_transaction(self):
         self.add_control(
             ctrl_name="bumeta:add-transaction",
-            href="api/transactions/",
+            href="/api/transactions/",
             method="POST",
             encoding="json",
             schema=self.transaction_schema()
@@ -162,7 +162,7 @@ class CategoryBuilder(MasonBuilder):
     def add_control_add_category(self):
         self.add_control(
             ctrl_name="bumeta:add-category",
-            href="api/categories/",
+            href="/api/categories/",
             method="POST",
             encoding="json",
             schema=self.category_schema()
@@ -296,7 +296,7 @@ class BankAccountBuilder(MasonBuilder):
     def add_control_add_bank_account(self):
         self.add_control(
             ctrl_name="bumeta:add-bank-account",
-            href="api/bankaccounts/",
+            href="/api/bankaccounts/",
             method="POST",
             encoding="json",
             schema=self.bank_account_schema()
