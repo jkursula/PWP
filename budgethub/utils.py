@@ -242,7 +242,7 @@ class UserBuilder(MasonBuilder):
     def add_control_add_user(self):
         self.add_control(
             ctrl_name="bumeta:add-user",
-            href="api/users/",
+            href="/api/users/",
             method="POST",
             encoding="json",
             schema=self.user_schema()
