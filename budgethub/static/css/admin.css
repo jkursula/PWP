@@ -1,0 +1,7 @@
+form label {
+    font-weight: bold;
+    display:block;/*Necessary for the first letter*/
+}
+form label:first-letter{
+    text-transform: uppercase;
+}
