@@ -330,8 +330,8 @@ function renderUser(body) {
         "<input type='text' name='location' value='" +
         body.location + "' readonly>"
     );
-    $("div.deletebutton").html('<button class="btn_delete">DELETE</button>');
-    $("div.deletebutton").click(deleteData(body["@controls"]["bumeta:delete"].href));
+    $(".deletebutton").html('<button class="deletebutton">DELETEE</button>');
+    $(".deletebutton").Onclick(deleteData(body["@controls"]["bumeta:delete"].href));
 }
 
 function renderBankAccount(body) {
