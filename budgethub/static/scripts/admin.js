@@ -111,19 +111,19 @@ function categoryRow(item) {
 
 //Not needed no pagination
 function appendTransactionRow(body) {
-    $(".resulttable tbody").append(transactionRow(body));
+    $(".resulttable tbody").append(transactionsRow(body));
 }
 
 function appendUserRow(body) {
-    $(".resulttable tbody").append(userRow(body));
+    $(".resulttable tbody").append(usersRow(body));
 }
 
 function appendBankAccountRow(body) {
-    $(".resulttable tbody").append(bankAccountRow(body));
+    $(".resulttable tbody").append(bankAccountsRow(body));
 }
 
 function appendCategoryRow(body) {
-    $(".resulttable tbody").append(categoryRow(body));
+    $(".resulttable tbody").append(categoriesRow(body));
 }
 //Might be needed
 function getSubmittedTransaction(data, status, jqxhr) {
@@ -289,13 +289,11 @@ function renderTransaction(body) {
     $("div.navigation").html(
         "<a href='" +
         body["@controls"]["bumeta:transactions-all"].href +
-        "' onClick='followLink(event, this, renderTransactions)'>Transaction Collection</a>" + " | " +
-        "<a href='" +
-        body["@controls"]["bumeta:transactions-all"].href +
-        "' onClick=' deleteData(/api/transactions/1/))'>Delete</a>"
+        "' onClick='followLink(event, this, renderTransactions)'>Transaction Collection</a>"
     );
     $(".resulttable thead").empty();
     $(".resulttable tbody").empty();
+    $("div.notification").empty();
     //renderTransactionForm(body["@controls"].self);
     $("input[name='price']").val(body.price);
     $("input[name='dateTime']").val(body.dateTime);
@@ -307,81 +305,64 @@ function renderTransaction(body) {
         "<input type='text' name='location' value='" +
         body.location + "' readonly>"
     );*/
-    $("div.deletebutton").html('<button class="btn_delete">DELETE</button>');
-    $("div.deletebutton").click(deleteData(body["@controls"]["bumeta:delete"].href));
+    $("div.deletebutton").html("<button onClick='deleteData(\""+body["@controls"]["bumeta:delete"].href+"\"); renderMsg(\"Deleted\");'>DELETE</button>");
 }
 
 function renderUser(body) {
+    $(".resulttable thead").empty();
+    $(".resulttable tbody").empty();
+    $("div.notification").empty();
     $("div.navigation").html(
         "<a href='" +
         body["@controls"]["bumeta:users-all"].href +
-        "' onClick='followLink(event, this, renderUsers)'>Users Collection</a>" + " | " +
-        "<a href='" +
-        body["@controls"]["bumeta:users-all"].href +
-        "' onClick=' deleteData(/api/transactions/1/))'>Delete</a>"
+        "' onClick='followLink(event, this, renderUsers)'>Users Collection</a>"
     );
-    $(".resulttable thead").empty();
-    $(".resulttable tbody").empty();
     renderUserForm(body["@controls"].edit);
     $("input[name='username']").val(body.username);
     $("input[name='bankAccount']").val(body.bankAccount);
-    $("form input[type='submit']").before(
+    /*$("form input[type='submit']").before(
         "<label>Location</label>" +
         "<input type='text' name='location' value='" +
         body.location + "' readonly>"
-    );
-    $(".deletebutton").html('<button class="deletebutton">DELETEE</button>');
-    $(".deletebutton").Onclick(deleteData(body["@controls"]["bumeta:delete"].href));
+    );*/
+    $("div.deletebutton").html("<button onClick='deleteData(\""+body["@controls"]["bumeta:delete"].href+"\"); renderMsg(\"Deleted\");'>DELETE</button>");
 }
 
 function renderBankAccount(body) {
+    $(".resulttable thead").empty();
+    $(".resulttable tbody").empty();
+    $("div.notification").empty();
     $("div.navigation").html(
         "<a href='" +
         body["@controls"]["bumeta:banks-all"].href +
-        "' onClick='followLink(event, this, renderBankAccounts)'>Bank Account Collection</a>" + " | " +
-        "<a href='" +
-        body["@controls"]["self"].href +
-        "' onClick=' deleteData(/api/transactions/1/))'>Delete</a>"
+        "' onClick='followLink(event, this, renderBankAccounts)'>Bank Account Collection</a>"
     );
-    $(".resulttable thead").empty();
-    $(".resulttable tbody").empty();
     renderBankAccountForm(body["@controls"].edit);
     $("input[name='iban']").val(body.iban);
     $("input[name='bankName']").val(body.bankName);
     $("input[name='user']").val(body.user);
-    $("form input[type='submit']").before(
-        "<label>Location</label>" +
-        "<input type='text' name='location' value='" +
-        body.location + "' readonly>"
-    );
-    $("div.deletebutton").html('<button class="btn_delete">DELETE</button>');
-    $("div.deletebutton").click(deleteData(body["@controls"]["bumeta:delete"].href));
+    $("div.deletebutton").html("<button onClick='deleteData(\""+body["@controls"]["bumeta:delete"].href+"\"); renderMsg(\"Deleted\");'>DELETE</button>");
 }
 
 function renderCategory(body) {
+    $(".resulttable thead").empty();
+    $(".resulttable tbody").empty();
+    $("div.notification").empty();
     $("div.navigation").html(
         "<a href='" +
         body["@controls"]["bumeta:categories-all"].href +
-        "' onClick='followLink(event, this, renderCategories)'>Category Collection</a>" + " | " +
-        "<a href='" +
-        body["@controls"]["self"].href +
-        "' onClick=' deleteData(/api/transactions/1/))'>Delete</a>"
+        "' onClick='followLink(event, this, renderCategories)'>Category Collection</a>"
     );
-    $(".resulttable thead").empty();
-    $(".resulttable tbody").empty();
     renderCategoryForm(body["@controls"].edit);
     $("input[name='category_name']").val(body.category_name);
-    $("form input[type='submit']").before(
-        "<label>Location</label>" +
-        "<input type='text' name='location' value='" +
-        body.location + "' readonly>"
-    );
-    $("div.deletebutton").html('<button class="btn_delete">DELETE</button>');
-    $("div.deletebutton").click(deleteData(body["@controls"]["bumeta:delete"].href));
+    $("div.deletebutton").html("<button onClick='deleteData(\""+body["@controls"]["bumeta:delete"].href+"\"); renderMsg(\"Deleted\");'>DELETE</button>");
 }
 function renderTransactions(body) {
-    $("div.navigation").empty()
-    
+    $("div.navigation").empty();
+    $("div.deletebutton").empty();
+    $("div.notification").empty();
+    $("div.tablecontrols").empty();
+    $(".resulttable tbody").empty();
     $("div.navigation").html(
         "<a href='" +
         "/api/users/" +
@@ -393,8 +374,6 @@ function renderTransactions(body) {
         "/api/categories/" +
         "' onClick='followLink(event, this, renderCategories)'>Categories</a>")
 
-    $("div.tablecontrols").empty();
-    $(".resulttable tbody").empty();
     $(".resulttable thead").html(
         "<tr><th>Price</th><th>Date</th><th>Sender</th><th>Receiver</th><th>Category</th><th>Actions</th></tr>"
     );
@@ -407,8 +386,11 @@ function renderTransactions(body) {
 }
 
 function renderUsers(body) {
-    $("div.navigation").empty()
-    
+    $("div.navigation").empty();
+    $("div.deletebutton").empty();
+    $("div.notification").empty();
+    $("div.tablecontrols").empty();
+    $(".resulttable tbody").empty();
     $("div.navigation").html(
         "<a href='" +
         "/api/transactions/" +
@@ -419,9 +401,6 @@ function renderUsers(body) {
         "<a href ='" +
         "/api/categories/" +
         "' onClick='followLink(event, this, renderCategories)'>Categories</a>")
-
-    $("div.tablecontrols").empty();
-    $(".resulttable tbody").empty();
     $(".resulttable thead").html(
         "<tr><th>Username</th><th>Bankaccount</th><th>Actions</th></tr>"
     );
@@ -434,8 +413,11 @@ function renderUsers(body) {
 }
 
 function renderBankAccounts(body) {
-    $("div.navigation").empty()
-    
+    $("div.navigation").empty();
+    $("div.deletebutton").empty();
+    $("div.notification").empty();
+    $("div.tablecontrols").empty();
+    $(".resulttable tbody").empty();
     $("div.navigation").html(
         "<a href='" +
         "/api/transactions/" +
@@ -446,9 +428,6 @@ function renderBankAccounts(body) {
         "<a href ='" +
         "/api/categories/" +
         "' onClick='followLink(event, this, renderCategories)'>Categories</a>")
-
-    $("div.tablecontrols").empty();
-    $(".resulttable tbody").empty();
     $(".resulttable thead").html(
         "<tr><th>iban</th><th>Bank Name</th><th>User</th><th>Actions</th></tr>"
     );
@@ -461,8 +440,11 @@ function renderBankAccounts(body) {
 }
 
 function renderCategories(body) {
-    $("div.navigation").empty()
-    
+    $("div.navigation").empty();
+    $("div.deletebutton").empty();
+    $("div.notification").empty();
+    $("div.tablecontrols").empty();
+    $(".resulttable tbody").empty();
     $("div.navigation").html(
         "<a href='" +
         "/api/transactions/" +
@@ -473,9 +455,6 @@ function renderCategories(body) {
         "<a href ='" +
         "/api/bankaccounts/" +
         "' onClick='followLink(event, this, renderBankAccounts)'>Bank Accounts</a>")
-
-    $("div.tablecontrols").empty();
-    $(".resulttable tbody").empty();
     $(".resulttable thead").html(
         "<tr><th>Name</th><th>transactions</th><th>Actions</th></tr>"
     );
@@ -487,6 +466,11 @@ function renderCategories(body) {
     renderCategoryForm(body["@controls"]["bumeta:add-category"]);
 }
 
+function entrypoint(body) {
+
+    getResource(body["@controls"]["bumeta:transactions-all"].href, renderTransactions)
+}
+
 $(document).ready(function () {
-    getResource("http://localhost:5000/api/transactions/", renderTransactions);
+    getResource("http://localhost:5000/api/", entrypoint);
 });
