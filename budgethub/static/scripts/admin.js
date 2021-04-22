@@ -384,13 +384,13 @@ function renderTransactions(body) {
     $(".resulttable tbody").empty();
     $("div.navigation").html(
         "<a href='" +
-        "/api/users/" +
+        body["@controls"]["bumeta:users-all"].href +
         "' onClick='followLink(event, this, renderUsers)'>Users</a>"+ " | " +
         "<a href ='" +
-        "/api/bankaccounts/" +
+        body["@controls"]["bumeta:bank-accounts-all"].href +
         "' onClick='followLink(event, this, renderBankAccounts)'>Bank Accounts</a>"+ " | " +
         "<a href ='" +
-        "/api/categories/" +
+        body["@controls"]["bumeta:categories-all"].href +
         "' onClick='followLink(event, this, renderCategories)'>Categories</a>")
 
     $(".resulttable thead").html(
@@ -413,13 +413,13 @@ function renderUsers(body) {
     $(".resulttable tbody").empty();
     $("div.navigation").html(
         "<a href='" +
-        "/api/transactions/" +
+        body["@controls"]["bumeta:transactions-all"].href +
         "' onClick='followLink(event, this, renderTransactions)'>Transactions</a>"+ " | " +
         "<a href ='" +
-        "/api/bankaccounts/" +
+        body["@controls"]["bumeta:bank-accounts-all"].href +
         "' onClick='followLink(event, this, renderBankAccounts)'>Bank Accounts</a>"+ " | " +
         "<a href ='" +
-        "/api/categories/" +
+        body["@controls"]["bumeta:categories-all"].href +
         "' onClick='followLink(event, this, renderCategories)'>Categories</a>")
     $(".resulttable thead").html(
         "<tr><th>Username</th><th>Bankaccount</th><th>Actions</th></tr>"
@@ -441,13 +441,13 @@ function renderBankAccounts(body) {
     $(".resulttable tbody").empty();
     $("div.navigation").html(
         "<a href='" +
-        "/api/transactions/" +
+        body["@controls"]["bumeta:transactions-all"].href +
         "' onClick='followLink(event, this, renderTransactions)'>Transactions</a>"+ " | " +
         "<a href ='" +
-        "/api/users/" +
+        body["@controls"]["bumeta:users-all"].href +
         "' onClick='followLink(event, this, renderUsers)'>Users</a>"+ " | " +
         "<a href ='" +
-        "/api/categories/" +
+        body["@controls"]["bumeta:categories-all"].href +
         "' onClick='followLink(event, this, renderCategories)'>Categories</a>")
     $(".resulttable thead").html(
         "<tr><th>iban</th><th>Bank Name</th><th>User</th><th>Actions</th></tr>"
