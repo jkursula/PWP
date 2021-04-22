@@ -89,3 +89,7 @@ pytest, pytest-cov using pip. Then issue following command:
 *pytest --cov-report term-missing --cov=budgethub*
 
 This will run both database and API test simultaneously and also provide with covariance report with score of 97/100
+
+# Client
+
+Use your favourite browser and navigate to http://127.0.0.1:5000/admin/ **while the API server is running''
