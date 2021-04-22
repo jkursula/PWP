@@ -1,17 +1,21 @@
+//modified from excercises and from https://github.com/enkwolf/pwp-course-sensorhub-api-example/
 "use strict"; 
 const DEBUG = true;
 const MASONJSON = "application/vnd.mason+json";
 const PLAINJSON = "application/json";
 
+//renders error message in case something fails
 function renderError(jqxhr) {
     let msg = jqxhr.responseJSON["@error"]["@message"];
     $("div.notification").html("<p class='error'>" + msg + "</p>");
 }
 
+//renders messages to be displayed about the programs functions
 function renderMsg(msg) {
     $("div.notification").html("<p class='msg'>" + msg + "</p>");
 }
 
+//sends get request to url and calls for function renderer
 function getResource(href, renderer) {
     $.ajax({
         url: href,
@@ -20,6 +24,7 @@ function getResource(href, renderer) {
     });
 }
 
+//used for sending data with POST and PUT methods
 function sendData(href, method, item, postProcessor) {
     console.log("Test " + href)
     $.ajax({
@@ -33,6 +38,7 @@ function sendData(href, method, item, postProcessor) {
     });
 }
 
+//Used for deletion of items
 function deleteData(href, postProcessor) {
 $.ajax({
     url: href,
@@ -42,6 +48,7 @@ $.ajax({
 });
 }
 
+//puts data for table elements for transaction collection and item
 function transactionsRow(item) {
     let link = "<a href='" +
                 item["@controls"].self.href +
@@ -55,6 +62,7 @@ function transactionsRow(item) {
             "</td><td>" + link + "</td></tr>";
 } 
 
+//puts data for table elements for users collection and item
 function usersRow(item) {
     let link = "<a href='" +
                 item["@controls"].self.href +
@@ -64,7 +72,7 @@ function usersRow(item) {
             "</td><td>" + item.bankAccount + 
             "</td><td>" + link + "</td></tr>";
 }
-
+//puts data for table elements for bankaccount collection and item
 function bankAccountsRow(item) {
     let link = "<a href='" +
                 item["@controls"].self.href +
@@ -76,6 +84,7 @@ function bankAccountsRow(item) {
             "</td><td>" + link + "</td></tr>";
 }
 
+//puts data for table elements in category collection and item
 function categoriesRow(item) {
     let link = "<a href='" +
                 item["@controls"].self.href +
@@ -92,40 +101,46 @@ function transactionRow(item) {
             "</td><td>" + item.sender + "</td></tr>";
 }
 
+//Not in use
 function userRow(item) {
 
     return "<tr><td>" + item.username +
             "</td><td>" + item.bankAccount + "</td></tr>";
 }
 
+//Not in use
 function bankAccountRow(item) {
 
     return "<tr><td>" + item.iban +
             "</td><td>" + item.bankName + "</td></tr>";
 }
 
+//Not in use
 function categoryRow(item) {
 
     return "<tr><td>" + item.category_name + "</td></tr>";
 }
-
-//Not needed no pagination
+//Adds new elements after submitting or editing
 function appendTransactionRow(body) {
     $(".resulttable tbody").append(transactionsRow(body));
 }
 
+//Adds new elements after submitting or editing
 function appendUserRow(body) {
     $(".resulttable tbody").append(usersRow(body));
 }
 
+//Adds new elements after submitting or editing
 function appendBankAccountRow(body) {
     $(".resulttable tbody").append(bankAccountsRow(body));
 }
 
+//Adds new elements after submitting or editing
 function appendCategoryRow(body) {
     $(".resulttable tbody").append(categoriesRow(body));
 }
-//Might be needed
+
+//Gets transaction after its creation to make sure it actually exists
 function getSubmittedTransaction(data, status, jqxhr) {
     renderMsg("Successful");
     let href = jqxhr.getResponseHeader("Location");
@@ -134,6 +149,7 @@ function getSubmittedTransaction(data, status, jqxhr) {
     }
 }
 
+//Gets user after its creation to make sure it actually exists
 function getSubmittedUser(data, status, jqxhr) {
     renderMsg("Successful");
     let href = jqxhr.getResponseHeader("Location");
@@ -142,6 +158,7 @@ function getSubmittedUser(data, status, jqxhr) {
     }
 }
 
+//Gets bank account after its creation to make sure it actually exists
 function getSubmittedBankAccount(data, status, jqxhr) {
     renderMsg("Successful");
     let href = jqxhr.getResponseHeader("Location");
@@ -150,6 +167,7 @@ function getSubmittedBankAccount(data, status, jqxhr) {
     }
 }
 
+//Gets category after its creation to make sure it actually exists
 function getSubmittedCategory(data, status, jqxhr) {
     renderMsg("Successful");
     let href = jqxhr.getResponseHeader("Location");
@@ -158,12 +176,13 @@ function getSubmittedCategory(data, status, jqxhr) {
     }
 }
 
+//used for link navigation
 function followLink(event, a, renderer) {
     event.preventDefault();
     getResource($(a).attr("href"), renderer);
 }
 
-
+//Handles submission of new transaction or editing
 function submitTransaction(event) {
     event.preventDefault();
 
@@ -176,6 +195,7 @@ function submitTransaction(event) {
     sendData(form.attr("action"), form.attr("method"), data, getSubmittedTransaction);
 }
 
+//Handles submission of new user or editing
 function submitUser(event) {
     event.preventDefault();
 
@@ -186,7 +206,7 @@ function submitUser(event) {
     data.bankAccount = $("input[name='bankAccount']").val().split(",");
     sendData(form.attr("action"), form.attr("method"), data, getSubmittedUser);
 }
-
+//Handles submission of new bankaccount or editing
 function submitBankAccount(event) {
     event.preventDefault();
 
@@ -197,6 +217,7 @@ function submitBankAccount(event) {
     sendData(form.attr("action"), form.attr("method"), data, getSubmittedBankAccount);
 }
 
+//handles submission of new category or editing
 function submitCategory(event) {
     event.preventDefault();
 
@@ -206,6 +227,7 @@ function submitCategory(event) {
     sendData(form.attr("action"), form.attr("method"), data, getSubmittedCategory);
 }
 
+//Handles the rendering of the form elements for transaction 
 function renderTransactionForm(ctrl) {
     let form = $("<form>");
     let price = ctrl.schema.properties.price;
@@ -230,6 +252,7 @@ function renderTransactionForm(ctrl) {
     $("div.form").html(form);
 }
 
+//handles rendering of user form for user 
 function renderUserForm(ctrl) {
     let form = $("<form>");
     let username = ctrl.schema.properties.username;
@@ -251,6 +274,7 @@ function renderUserForm(ctrl) {
     $("div.form").html(form);
 }
 
+//handles rendering of form for bank account 
 function renderBankAccountForm(ctrl) {
     let form = $("<form>");
     let iban = ctrl.schema.properties.iban;
@@ -269,6 +293,7 @@ function renderBankAccountForm(ctrl) {
     $("div.form").html(form);
 }
 
+//handles rendering of form elements for category
 function renderCategoryForm(ctrl) {
     let form = $("<form>");
     let category_name = ctrl.schema.properties.category_name;
@@ -284,7 +309,7 @@ function renderCategoryForm(ctrl) {
     $("div.form").html(form);
 }
 
-//modify this
+//renders view for transaction item
 function renderTransaction(body) {
     $("div.navigation").html(
         "<a href='" +
@@ -294,20 +319,15 @@ function renderTransaction(body) {
     $(".resulttable thead").empty();
     $(".resulttable tbody").empty();
     $("div.notification").empty();
-    //renderTransactionForm(body["@controls"].self);
     $("input[name='price']").val(body.price);
     $("input[name='dateTime']").val(body.dateTime);
     $("input[name='sender']").val(body.sender);
     $("input[name='receiver']").val(body.receiver);
     $("input[name='category']").val(body.category);
-    /*$("form input[type='submit']").before(
-        "<label>Location</label>" +
-        "<input type='text' name='location' value='" +
-        body.location + "' readonly>"
-    );*/
     $("div.deletebutton").html("<button onClick='deleteData(\""+body["@controls"]["bumeta:delete"].href+"\"); renderMsg(\"Deleted\");'>DELETE</button>");
 }
 
+//render view for user item
 function renderUser(body) {
     $(".resulttable thead").empty();
     $(".resulttable tbody").empty();
@@ -320,14 +340,10 @@ function renderUser(body) {
     renderUserForm(body["@controls"].edit);
     $("input[name='username']").val(body.username);
     $("input[name='bankAccount']").val(body.bankAccount);
-    /*$("form input[type='submit']").before(
-        "<label>Location</label>" +
-        "<input type='text' name='location' value='" +
-        body.location + "' readonly>"
-    );*/
     $("div.deletebutton").html("<button onClick='deleteData(\""+body["@controls"]["bumeta:delete"].href+"\"); renderMsg(\"Deleted\");'>DELETE</button>");
 }
 
+//renders view for bank account item
 function renderBankAccount(body) {
     $(".resulttable thead").empty();
     $(".resulttable tbody").empty();
@@ -344,6 +360,7 @@ function renderBankAccount(body) {
     $("div.deletebutton").html("<button onClick='deleteData(\""+body["@controls"]["bumeta:delete"].href+"\"); renderMsg(\"Deleted\");'>DELETE</button>");
 }
 
+//renders view for category item
 function renderCategory(body) {
     $(".resulttable thead").empty();
     $(".resulttable tbody").empty();
@@ -357,6 +374,8 @@ function renderCategory(body) {
     $("input[name='category_name']").val(body.category_name);
     $("div.deletebutton").html("<button onClick='deleteData(\""+body["@controls"]["bumeta:delete"].href+"\"); renderMsg(\"Deleted\");'>DELETE</button>");
 }
+
+//handles rendering of transaction collection view
 function renderTransactions(body) {
     $("div.navigation").empty();
     $("div.deletebutton").empty();
@@ -385,6 +404,7 @@ function renderTransactions(body) {
     renderTransactionForm(body["@controls"]["bumeta:add-transaction"]);
 }
 
+//renders the view for users collection
 function renderUsers(body) {
     $("div.navigation").empty();
     $("div.deletebutton").empty();
@@ -412,6 +432,7 @@ function renderUsers(body) {
     renderUserForm(body["@controls"]["bumeta:add-user"]);
 }
 
+//render the view for bank account collection
 function renderBankAccounts(body) {
     $("div.navigation").empty();
     $("div.deletebutton").empty();
@@ -439,6 +460,7 @@ function renderBankAccounts(body) {
     renderBankAccountForm(body["@controls"]["bumeta:add-bank-account"]);
 }
 
+//renders the view for category collection
 function renderCategories(body) {
     $("div.navigation").empty();
     $("div.deletebutton").empty();
@@ -466,11 +488,13 @@ function renderCategories(body) {
     renderCategoryForm(body["@controls"]["bumeta:add-category"]);
 }
 
+//start the client with connection to the API entry-point
 function entrypoint(body) {
 
     getResource(body["@controls"]["bumeta:transactions-all"].href, renderTransactions)
 }
 
+//This ask for entrypoint connection.
 $(document).ready(function () {
     getResource("http://localhost:5000/api/", entrypoint);
 });
