@@ -21,6 +21,9 @@ class TransactionCollection(Resource):
         body.add_namespace("bumeta", LINK_RELATIONS_URL)
         body.add_control("self", "/api/users/")
         body.add_control_add_transaction()
+        body.add_control_all_bank_accounts()
+        body.add_control_all_categories()
+        body.add_control_all_users()
 
         items = []
         for transaction in Transaction.query.all():

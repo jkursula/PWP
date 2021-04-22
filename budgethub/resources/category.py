@@ -16,7 +16,11 @@ class CategoryCollection(Resource):
     def get(self):
         body = CategoryBuilder()
         body.add_namespace("bumeta", LINK_RELATIONS_URL)
+        body.add_control("self", "/api/categories/")
         body.add_control_add_category()
+        body.add_control_all_bank_accounts()
+        body.add_control_all_transactions()
+        body.add_control_all_users()
 
         categories = []
         for category in Category.query.all():

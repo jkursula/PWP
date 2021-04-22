@@ -118,6 +118,39 @@ class TransactionBuilder(MasonBuilder):
             title="Leads to the list of all transactions"
         )
 
+    def add_control_all_categories(self):
+        self.add_control(
+            "bumeta:categories-all",
+            "/api/categories/",
+            method="GET",
+            title="Leads to the list of all categories"
+        )
+
+    def add_control_all_users(self):
+        self.add_control(
+            "bumeta:users-all",
+            "/api/users/",
+            method="GET",
+            title="Leads to the list of all users"
+        )
+
+    def add_control_all_bank_accounts(self):
+        self.add_control(
+            "bumeta:bank-accounts-all",
+            "/api/bankaccounts/",
+            method="GET",
+            title="Leads to the list of all bank accounts"
+        )
+
+    def add_control_add_bank_account(self):
+        self.add_control(
+            ctrl_name="bumeta:add-bank-account",
+            href="/api/bankaccounts/",
+            method="POST",
+            encoding="json",
+            schema=self.bank_account_schema()
+        )
+
     def add_control_add_transaction(self):
         self.add_control(
             ctrl_name="bumeta:add-transaction",
@@ -151,12 +184,45 @@ class CategoryBuilder(MasonBuilder):
 
         return schema
 
+    def add_control_all_transactions(self):
+        self.add_control(
+            "bumeta:transactions-all",
+            "/api/transactions/",
+            method="GET",
+            title="Leads to the list of all transactions"
+        )
+
     def add_control_all_categories(self):
         self.add_control(
             "bumeta:categories-all",
             "/api/categories/",
             method="GET",
             title="Leads to the list of all categories"
+        )
+
+    def add_control_all_users(self):
+        self.add_control(
+            "bumeta:users-all",
+            "/api/users/",
+            method="GET",
+            title="Leads to the list of all users"
+        )
+
+    def add_control_all_bank_accounts(self):
+        self.add_control(
+            "bumeta:bank-accounts-all",
+            "/api/bankaccounts/",
+            method="GET",
+            title="Leads to the list of all bank accounts"
+        )
+
+    def add_control_add_bank_account(self):
+        self.add_control(
+            ctrl_name="bumeta:add-bank-account",
+            href="/api/bankaccounts/",
+            method="POST",
+            encoding="json",
+            schema=self.bank_account_schema()
         )
 
     def add_control_add_category(self):
@@ -231,12 +297,45 @@ class UserBuilder(MasonBuilder):
 
         return schema
 
+    def add_control_all_transactions(self):
+        self.add_control(
+            "bumeta:transactions-all",
+            "/api/transactions/",
+            method="GET",
+            title="Leads to the list of all transactions"
+        )
+
+    def add_control_all_categories(self):
+        self.add_control(
+            "bumeta:categories-all",
+            "/api/categories/",
+            method="GET",
+            title="Leads to the list of all categories"
+        )
+
     def add_control_all_users(self):
         self.add_control(
             "bumeta:users-all",
             "/api/users/",
             method="GET",
             title="Leads to the list of all users"
+        )
+
+    def add_control_all_bank_accounts(self):
+        self.add_control(
+            "bumeta:bank-accounts-all",
+            "/api/bankaccounts/",
+            method="GET",
+            title="Leads to the list of all bank accounts"
+        )
+
+    def add_control_add_bank_account(self):
+        self.add_control(
+            ctrl_name="bumeta:add-bank-account",
+            href="/api/bankaccounts/",
+            method="POST",
+            encoding="json",
+            schema=self.bank_account_schema()
         )
 
     def add_control_add_user(self):
@@ -284,6 +383,30 @@ class BankAccountBuilder(MasonBuilder):
         }
 
         return schema
+
+    def add_control_all_transactions(self):
+        self.add_control(
+            "bumeta:transactions-all",
+            "/api/transactions/",
+            method="GET",
+            title="Leads to the list of all transactions"
+        )
+
+    def add_control_all_categories(self):
+        self.add_control(
+            "bumeta:categories-all",
+            "/api/categories/",
+            method="GET",
+            title="Leads to the list of all categories"
+        )
+
+    def add_control_all_users(self):
+        self.add_control(
+            "bumeta:users-all",
+            "/api/users/",
+            method="GET",
+            title="Leads to the list of all users"
+        )
 
     def add_control_all_bank_accounts(self):
         self.add_control(

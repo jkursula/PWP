@@ -17,6 +17,9 @@ class UserCollection(Resource):
         body.add_namespace("bumeta", LINK_RELATIONS_URL)
         body.add_control("self", "/api/users/")
         body.add_control_add_user()
+        body.add_control_all_bank_accounts()
+        body.add_control_all_categories()
+        body.add_control_all_transactions()
 
         items = []
         for user in User.query.all():

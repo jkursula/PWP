@@ -16,6 +16,9 @@ class BankAccountCollection(Resource):
         body.add_namespace("bumeta", LINK_RELATIONS_URL)
         body.add_control("self", "/api/bankaccounts/")
         body.add_control_add_bank_account()
+        body.add_control_all_categories()
+        body.add_control_all_transactions()
+        body.add_control_all_users()
 
         banks = []
         for bank in BankAccount.query.all():
