@@ -14,6 +14,13 @@ from budgethub import db, create_app
 from budgethub.models import Transaction, BankAccount, User, Category
 import tests.utils as utils
 
+
+'''
+
+Modified from the example in the course exercises from 
+https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/testing-flask-applications-part-2/
+
+'''
 #development app
 app = create_app()
 
@@ -419,10 +426,17 @@ class TestUserCollection(object):
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
         
+        #remove bankAccount fiel for 400
+        valid.pop("bankAccount")
+        print(valid)
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 400
+
         # remove username field for 400
         valid.pop("username")
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 400
+
         
         
 class TestUserItem(object):
@@ -532,7 +546,12 @@ class TestTransactionCollection(object):
             utils._check_control_get_method("self", client, item)
             utils._check_control_get_method("profile", client, item)
             assert "id" in item
-            #assert "password" in item
+            assert "price" in item
+            assert "dateTime" in item
+            assert "sender" in item
+            assert "receiver" in item
+            assert "category" in item
+            
 
     def test_post(self, client):
         """
@@ -542,6 +561,9 @@ class TestTransactionCollection(object):
         """
         
         valid = utils._get_transaction_json()
+        print(valid)
+        wrong_user = "vaarin"
+        wrong_category = ["cat666"]
         
         # test with wrong content type
         resp = client.post(self.RESOURCE_URL, data=json.dumps(valid))
@@ -550,17 +572,27 @@ class TestTransactionCollection(object):
         # test with valid and see that it exists afterward
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 201
-        #assert resp.headers["Location"].endswith(self.RESOURCE_URL +  + "/")
         resp = client.get(resp.headers["Location"])
         assert resp.status_code == 200
         body = json.loads(resp.data)
-        #assert body["id"] == "3"
         assert body["sender"] == "user1"
         
-        # send same data again for 409 not implemented creates new transaction
-        #resp = client.post(self.RESOURCE_URL, json=valid)
-        #assert resp.status_code == 409
-        
+        #test that wrong users or categories cannot be used
+        valid["category"] = wrong_category
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 404
+        valid["sender"] = wrong_user
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 404
+        valid["receiver"] = wrong_user
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 404
+
+        #remove receiver field to test that it fails
+        valid.pop("receiver")
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 400
+
         # remove price field for 400
         valid.pop("price")
         resp = client.post(self.RESOURCE_URL, json=valid)

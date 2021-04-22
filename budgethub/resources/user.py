@@ -60,13 +60,10 @@ class UserCollection(Resource):
                 )
             db_bankaccount_list.append(db_bankaccount)
 
-
-
         user = User(
             username=request.json["username"],
             password=request.json["password"],
             bankAccount=db_bankaccount_list
-
         )
 
         try:

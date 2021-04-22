@@ -257,7 +257,7 @@ class UserBuilder(MasonBuilder):
     def user_schema():
         schema = {
             "type": "object",
-            "required": ["username"]
+            "required": ["username", "password", "bankAccount"]
         }
         props = schema["properties"] = {}
         props["username"] = {
@@ -279,7 +279,7 @@ class UserBuilder(MasonBuilder):
     def create_user_schema():
         schema = {
             "type": "object",
-            "required": ["username", "password"]
+            "required": ["username", "password", "bankAccount"]
         }
         props = schema["properties"] = {}
         props["username"] = {
