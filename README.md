@@ -92,4 +92,4 @@ This will run both database and API test simultaneously and also provide with co
 
 # Client
 
-Use your favourite browser and navigate to http://127.0.0.1:5000/admin/ **while the API server is running''
+Use your favourite browser and navigate to http://127.0.0.1:5000/admin/ **while the API server is running**
