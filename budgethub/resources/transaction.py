@@ -27,14 +27,45 @@ class TransactionCollection(Resource):
 
         items = []
         for transaction in Transaction.query.all():
-            transaction_item_body = TransactionBuilder(
-                id = transaction.id,
-                price = transaction.price,
-                dateTime = str(transaction.dateTime),
-                sender = transaction.sender.username,
-                receiver = transaction.receiver.username,
-                category = [cat.categoryName for cat in transaction.category]
-            )
+            try:
+                transaction_item_body = TransactionBuilder(
+                    id = transaction.id,
+                    price = transaction.price,
+                    dateTime = str(transaction.dateTime),
+                    sender = transaction.sender.username,
+                    receiver = transaction.receiver.username,
+                    category = [cat.categoryName for cat in transaction.category]
+                )
+            except AttributeError:
+                try:
+                    transaction_item_body = TransactionBuilder(
+                        id = transaction.id,
+                        price = transaction.price,
+                        dateTime = str(transaction.dateTime),
+                        sender = "Null",
+                        receiver = transaction.receiver.username,
+                        category = [cat.categoryName for cat in transaction.category]
+                    )
+                except AttributeError:
+                    try:
+                        transaction_item_body = TransactionBuilder(
+                            id = transaction.id,
+                            price = transaction.price,
+                            dateTime = str(transaction.dateTime),
+                            sender = transaction.sender.username,
+                            receiver = "Null",
+                            category = [cat.categoryName for cat in transaction.category]
+                        )
+                    except AttributeError:
+                            transaction_item_body = TransactionBuilder(
+                            id = transaction.id,
+                            price = transaction.price,
+                            dateTime = str(transaction.dateTime),
+                            sender = "Null",
+                            receiver = "Null",
+                            category = [cat.categoryName for cat in transaction.category]
+                        )
+
             transaction_item_body.add_control("self", url_for("api.transactionitem", transaction_id=transaction.id))
             transaction_item_body.add_control("profile", TRANSACTION_PROFILE)
             items.append(transaction_item_body)
@@ -107,14 +138,40 @@ class TransactionItem(Resource):
                 404, "Not found",
                 "No transaction was found with the id {}".format(transaction_id)
             )
-
-        body = TransactionBuilder(
-            price=db_transaction.price,
-            dateTime=str(db_transaction.dateTime),
-            sender=db_transaction.sender.username,
-            receiver=db_transaction.receiver.username,
-            category=[cat.categoryName for cat in db_transaction.category]
-            )
+        try:
+            body = TransactionBuilder(
+                price=db_transaction.price,
+                dateTime=str(db_transaction.dateTime),
+                sender=db_transaction.sender.username,
+                receiver=db_transaction.receiver.username,
+                category=[cat.categoryName for cat in db_transaction.category]
+                )
+        except AttributeError:
+            try:
+                body = TransactionBuilder(
+                    price=db_transaction.price,
+                    dateTime=str(db_transaction.dateTime),
+                    sender="Null",
+                    receiver=db_transaction.receiver.username,
+                    category=[cat.categoryName for cat in db_transaction.category]
+                    )
+            except AttributeError:
+                try:
+                    body = TransactionBuilder(
+                    price=db_transaction.price,
+                    dateTime=str(db_transaction.dateTime),
+                    sender=db_transaction.sender.username,
+                    receiver="Null",
+                    category=[cat.categoryName for cat in db_transaction.category]
+                    )
+                except AttributeError:
+                    body = TransactionBuilder(
+                    price=db_transaction.price,
+                    dateTime=str(db_transaction.dateTime),
+                    sender="Null",
+                    receiver="Null",
+                    category=[cat.categoryName for cat in db_transaction.category]
+                    )
         body.add_namespace("bumeta", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.transactionitem", transaction_id=transaction_id))
         body.add_control("profile", TRANSACTION_PROFILE)
