@@ -88,6 +88,16 @@ class TestEntryPoint(object):
         utils._check_control_get_method("bumeta:users-all", client, body)
         utils._check_control_get_method("bumeta:bankaccounts-all", client, body)
         utils._check_control_get_method("bumeta:categories-all", client, body)
+
+class TestAdminSite(object):
+
+#Test that the Api's admin site or client is accessible
+
+    RESOURCE_URL = "/admin/"
+
+    def test_get(self, client):
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
     
 class TestBankaccountCollection(object):
     """
@@ -96,6 +106,7 @@ class TestBankaccountCollection(object):
     """
     
     RESOURCE_URL = "/api/bankaccounts/"
+    
 
     def test_get(self, client):
         """
@@ -110,6 +121,9 @@ class TestBankaccountCollection(object):
         body = json.loads(resp.data)
         utils._check_namespace(client, body)
         utils._check_control_post_method("bumeta:add-bank-account", client, body)
+        utils._check_control_get_method("bumeta:categories-all", client, body)
+        utils._check_control_get_method("bumeta:transactions-all", client, body)
+        utils._check_control_get_method("bumeta:users-all", client, body)
         assert len(body["items"]) == 2
         for item in body["items"]:
             utils._check_control_get_method("self", client, item)
@@ -171,7 +185,7 @@ class TestBankaccountItem(object):
         assert body["bankName"] == "The bank"
         utils._check_namespace(client, body)
         utils._check_control_get_method("profile", client, body)
-        utils._check_control_get_method("bumeta:banks-all", client, body)
+        utils._check_control_get_method("bumeta:bank-accounts-all", client, body)
         utils._check_control_put_method("edit", client, body)
         utils._check_control_delete_method("bumeta:delete", client, body)
         resp = client.get(self.INVALID_URL)
@@ -253,6 +267,9 @@ class TestCategoryCollection(object):
         body = json.loads(resp.data)
         utils._check_namespace(client, body)
         utils._check_category_control_post_method("bumeta:add-category", client, body)
+        utils._check_control_get_method("bumeta:bank-accounts-all", client, body)
+        utils._check_control_get_method("bumeta:transactions-all", client, body)
+        utils._check_control_get_method("bumeta:users-all", client, body)
         assert len(body["items"]) == 2
         for item in body["items"]:
             utils._check_control_get_method("self", client, item)
@@ -392,6 +409,9 @@ class TestUserCollection(object):
         body = json.loads(resp.data)
         utils._check_namespace(client, body)
         utils._check_user_control_post_method("bumeta:add-user", client, body)
+        utils._check_control_get_method("bumeta:bank-accounts-all", client, body)
+        utils._check_control_get_method("bumeta:transactions-all", client, body)
+        utils._check_control_get_method("bumeta:categories-all", client, body)
         assert len(body["items"]) == 2
         for item in body["items"]:
             utils._check_control_get_method("self", client, item)
@@ -407,7 +427,9 @@ class TestUserCollection(object):
         """
         
         valid = utils._get_user_json()
-        
+        wrong_bank = {"username": "user10","password": "Kakka","bankAccount": ["en kerros"]}
+        resp = client.post(self.RESOURCE_URL, json=wrong_bank)
+        assert resp.status_code == 404
         # test with wrong content type
         resp = client.post(self.RESOURCE_URL, data=json.dumps(valid))
         assert resp.status_code == 415
@@ -425,7 +447,7 @@ class TestUserCollection(object):
         # send same data again for 409
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
-        
+
         #remove bankAccount fiel for 400
         valid.pop("bankAccount")
         print(valid)
@@ -475,7 +497,10 @@ class TestUserItem(object):
         
         valid = utils._get_user_json()
         validmod = utils._get_modified_user_json()
-        
+        wrong_bank = {"username": "user1","password": "Kakka","bankAccount": ["en kerros"]}
+        resp = client.put(self.RESOURCE_URL, json=wrong_bank)
+        assert resp.status_code == 404
+
         # test with wrong content type
         resp = client.put(self.RESOURCE_URL, data=json.dumps(valid))
         assert resp.status_code == 415
@@ -527,6 +552,8 @@ class TestTransactionCollection(object):
     """
     
     RESOURCE_URL = "/api/transactions/"
+    DELETE_USER1_URL = "/api/users/user1/"
+    DELETE_USER2_URL = "/api/users/user2/"
 
     def test_get(self, client):
         """
@@ -541,6 +568,9 @@ class TestTransactionCollection(object):
         body = json.loads(resp.data)
         utils._check_namespace(client, body)
         utils._check_transaction_control_post_method("bumeta:add-transaction", client, body)
+        utils._check_control_get_method("bumeta:bank-accounts-all", client, body)
+        utils._check_control_get_method("bumeta:categories-all", client, body)
+        utils._check_control_get_method("bumeta:users-all", client, body)
         assert len(body["items"]) == 1
         for item in body["items"]:
             utils._check_control_get_method("self", client, item)
@@ -551,6 +581,13 @@ class TestTransactionCollection(object):
             assert "sender" in item
             assert "receiver" in item
             assert "category" in item
+        client.delete(self.DELETE_USER1_URL)
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        client.delete(self.DELETE_USER2_URL)
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+
             
 
     def test_post(self, client):
@@ -563,6 +600,7 @@ class TestTransactionCollection(object):
         valid = utils._get_transaction_json()
         print(valid)
         wrong_user = "vaarin"
+        wrong_user2 = "xd"
         wrong_category = ["cat666"]
         
         # test with wrong content type
@@ -581,10 +619,12 @@ class TestTransactionCollection(object):
         valid["category"] = wrong_category
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 404
+        valid = utils._get_transaction_json()
         valid["sender"] = wrong_user
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 404
-        valid["receiver"] = wrong_user
+        valid = utils._get_transaction_json()
+        valid["receiver"] = wrong_user2
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 404
 
@@ -604,6 +644,8 @@ class TestTransactionItem(object):
     RESOURCE_URL = "/api/transactions/1/"
     INVALID_URL = "/api/transactions/5/"
     MODIFIED_URL = "/api/transactions/3/"
+    DELETE_USER1_URL = "/api/users/user1/"
+    DELETE_USER2_URL = "/api/users/user2/"
     
     def test_get(self, client):
         """
@@ -621,6 +663,12 @@ class TestTransactionItem(object):
         utils._check_namespace(client, body)
         utils._check_control_get_method("profile", client, body)
         utils._check_control_get_method("bumeta:transactions-all", client, body)
+        client.delete(self.DELETE_USER1_URL)
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        client.delete(self.DELETE_USER2_URL)
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
         #_check_transaction_control_put_method("edit", client, body)
         utils._check_control_delete_method("bumeta:delete", client, body)
         resp = client.get(self.INVALID_URL)

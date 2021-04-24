@@ -114,17 +114,11 @@ class TransactionCollection(Resource):
             sender=db_sender,
             receiver=db_receiver,
             category=db_category_list
- 
         )
 
-        try:
-            db.session.add(transaction)
-            db.session.commit()
-        except IntegrityError:
-            return create_error_response(
-                409, "Already exists",
-                "implement actual error message"
-            )
+        db.session.add(transaction)
+        db.session.commit()
+
 
         return Response(status=201, headers={
             "Location": url_for("api.transactionitem", transaction_id=transaction.id)

@@ -83,7 +83,7 @@ class BankAccountItem(Resource):
         body.add_namespace("bumeta", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.bankaccountitem", iban=iban))
         body.add_control("profile", BANK_ACCOUNT_PROFILE)
-        body.add_control("bumeta:banks-all", url_for("api.bankaccountcollection"))
+        body.add_control_all_bank_accounts()
         body.add_control_delete_bank_account(iban)
         body.add_control_edit_bank_account(iban)
 
