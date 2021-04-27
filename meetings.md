@@ -41,7 +41,7 @@
 * **ASSISTANTS:** Mika Oja
 
 ### Minutes
-*The "Uniform Interface" -table, as it is not quite the same as in the implementation. In the Apiary there are minor fixes to be made and also we need to consider what parts should be made public and what should not (for example the user password). Schema was also missing in some parts. REST conformance -part is a little bit under discussed, we should extend it.*
+*The "Uniform Interface" -table needs updating, as it is not quite the same as in the implementation. In the Apiary there are minor fixes to be made and also we need to consider what parts should be made public and what should not (for example the user password). Schema was also missing in some parts. REST conformance -part is too short, we should extend it.*
 
 ### Action points
 * *Update "Unifor Interface" -table according to the implementation.*
