@@ -475,7 +475,7 @@ function renderCategories(body) {
         body["@controls"]["bumeta:users-all"].href +
         "' onClick='followLink(event, this, renderUsers)'>Users</a>"+ " | " +
         "<a href ='" +
-        body["@controls"]["bumeta:categories-all"].href +
+        body["@controls"]["bumeta:bank-accounts-all"].href +
         "' onClick='followLink(event, this, renderBankAccounts)'>Bank Accounts</a>")
     $(".resulttable thead").html(
         "<tr><th>Name</th><th>transactions</th><th>Actions</th></tr>"
