@@ -469,13 +469,13 @@ function renderCategories(body) {
     $(".resulttable tbody").empty();
     $("div.navigation").html(
         "<a href='" +
-        "/api/transactions/" +
+        body["@controls"]["bumeta:transactions-all"].href +
         "' onClick='followLink(event, this, renderTransactions)'>Transactions</a>"+ " | " +
         "<a href ='" +
-        "/api/users/" +
+        body["@controls"]["bumeta:users-all"].href +
         "' onClick='followLink(event, this, renderUsers)'>Users</a>"+ " | " +
         "<a href ='" +
-        "/api/bankaccounts/" +
+        body["@controls"]["bumeta:categories-all"].href +
         "' onClick='followLink(event, this, renderBankAccounts)'>Bank Accounts</a>")
     $(".resulttable thead").html(
         "<tr><th>Name</th><th>transactions</th><th>Actions</th></tr>"
